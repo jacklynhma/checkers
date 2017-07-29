@@ -1,3 +1,6 @@
+![Build Status](https://codeship.com/projects/68475c30-56db-0135-3fa1-7e1de17b1d2f/status?branch=master)
+![Code Climate](https://codeclimate.com/github/jacklynhma/checkers.png)
+![Coverage Status](https://coveralls.io/repos/jacklynhma/checkers/badge.png)
 # README
 
 This README would normally document whatever steps are necessary to get the
