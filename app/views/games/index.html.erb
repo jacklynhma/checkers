@@ -1,0 +1,27 @@
+<%=link_to "Create a new game", new_game_path%><br />
+<% @games.each do |game| %>
+  <%= link_to game.name, game_path(game.id) %>
+
+  <!-- if current user exists -->
+  <% if current_user %>
+    <% if current_user.playing?(game) %>
+      Joined!
+      <%= link_to("Resign", resign_game_path(game.id), method: "post") %>
+    <% else %>
+      <%= link_to("Join", join_game_path(game.id), method: "post") %>
+    <% end %>
+    <br>
+  <% end %>
+<% end %>
+
+<ul>
+  <% if user_signed_in? %>
+    <li><%= link_to "Sign Out", destroy_user_session_path, method: :delete %></li>
+    <% if current_user.admin? %>
+      <li><%= link_to "Admin Section", admin_path %></li>
+    <% end %>
+  <% else %>
+    <li><%= link_to "Sign up", new_user_registration_path %>
+    <li><%= link_to "Sign In", new_user_session_path %></li>
+  <% end %>
+</ul>
