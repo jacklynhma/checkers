@@ -1,0 +1,11 @@
+
+<%= form_for :coordinate, url: game_path(@game), method: "PUT" do |f| %>
+
+  <%= f.label :from %>
+  <%= f.text_area :from %>
+
+  <%= f.label :to %>
+  <%= f.text_area :to %>
+
+  <%= f.submit %>
+<% end %>

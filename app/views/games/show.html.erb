@@ -1,0 +1,7 @@
+<div>
+<% @game.pieces.each do |row| %>
+  <%= row %><br/>
+<% end %>
+</div>
+<br>
+<%= link_to "Make a move", edit_game_path(@game.id) %>
