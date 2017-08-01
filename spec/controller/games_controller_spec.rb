@@ -3,7 +3,9 @@ require 'byebug'
 require 'devise'
 
 RSpec.describe GamesController, type: :controller do
-let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
+let(:first_game) { Game.create(name: "testing" )}
+let!(:first_user) { User.create(first_name: "jackie", email: "jackie@gmail.com", password: "apples")}
+let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: first_game.id )}
 
   describe "GET#Index" do
     # return a list of games
@@ -26,7 +28,7 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
       expect(response).to redirect_to user_session_path
       # see if you can see first game on the page
     end
-  let!(:first_user) { User.create(first_name: "jackie", email: "jackie@gmail.com", password: "apples")}
+
     it "allow to edit game since user is logged in" do
       sign_in first_user
       get :edit, params: {id: first_game.id}
@@ -34,15 +36,8 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
       expect(response.status).to eq 200
       # see if you can see first game on the page
     end
-    it "allows the user to edit game" do
-      sign_in first_user
-      get :edit, params: {id: first_game.id}
-
-    end
   end
 
-  let(:first_user) { User.create(first_name: "jackie", email: "jackie@gmail.com", password: "apples")}
-  let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: first_game.id )}
   describe "GET#show" do
     # return a list of games
     # need to have a user to sign in
@@ -59,6 +54,7 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
   describe "PUT#update" do
     it "update game with new move " do
       sign_in first_user
+
       put :update, params: {id: first_game.id, coordinate: {from: "[2,1]", to: "[3,2]"}}
 
       expect(response).to redirect_to(first_game)
@@ -81,8 +77,7 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
         [nil, nil, nil, "R", nil, nil, nil, nil],
         ["R", nil, "R", nil, nil, nil, "R", nil],
         [nil, "R", nil, "R", nil, "R", nil, "R"],
-        ["R", nil, "R", nil, "R", nil, "R", nil]],
-        history_of_pieces: "[]"
+        ["R", nil, "R", nil, "R", nil, "R", nil]]
         })
       }
       it "should fail to update" do
@@ -104,8 +99,7 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
         [nil, nil, nil, "R", nil, nil, nil, nil],
         ["R", nil, "R", nil, nil, nil, "R", nil],
         [nil, "R", nil, "R", nil, "R", nil, "R"],
-        ["R", nil, "R", nil, "R", nil, "R", nil]],
-        history_of_pieces: "[]"
+        ["R", nil, "R", nil, "R", nil, "R", nil]]
         })
       }
       it "should eat the opposing piece next to it" do
@@ -128,8 +122,7 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
         [nil, nil, nil, "R", nil, nil, nil, nil],
         ["R", nil, "R", nil, nil, nil, "R", nil],
         [nil, "R", nil, "R", nil, "R", nil, "R"],
-        ["R", nil, "R", nil, "R", nil, "R", nil]],
-        history_of_pieces: "[]"
+        ["R", nil, "R", nil, "R", nil, "R", nil]]
         })
       }
       it "all the piece should remain the same" do
@@ -152,8 +145,7 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
         [nil, nil, nil, "R", nil, nil, nil, nil],
         ["R", nil, "R", nil, nil, nil, "R", nil],
         [nil, "R", nil, "R", nil, "R", nil, "R"],
-        ["R", nil, "R", nil, "R", nil, "R", nil]],
-        history_of_pieces: "[]"
+        ["R", nil, "R", nil, "R", nil, "R", nil]]
         })
       }
       it "R is allowed to move to the left" do
@@ -167,7 +159,7 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
     end
     context "R piece can jump twice if there is an opposing piece next to it and there is an empty space" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", state_of_piece:
+      let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
         [[nil, "B", nil, nil, nil, "B", nil, "B"],
         ["B", nil, "B", nil, "B", nil , "B", nil],
         [nil, nil, nil, nil, nil, "B", nil, nil],
@@ -175,19 +167,45 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
         [nil, "R", nil, "R", nil, nil, nil, nil],
         ["R", nil, nil, nil, nil, nil, nil, nil],
         [nil, "R", nil, "R", nil, "R", nil, "R"],
-        ["R", nil, "R", nil, "R", nil, "R", nil]],
-        history_of_pieces: "[]"
+        ["R", nil, "R", nil, "R", nil, "R", nil]]
         })
       }
       it "there should be two black piece eatten" do
         sign_in first_user
-        put :update, params: {id: third_game.id, coordinate: {from: "[4,3]", to: "[0,2]"}}
+        put :update, params: {id: third_game.id, coordinate: {from: "[4,3]", to: "[2,1]"}}
+        expect(response).to redirect_to(third_game)
+
+        expect(third_game.reload.state_of_piece[2][1]).to eq "R"
+        expect(third_game.reload.state_of_piece[4][3]).to eq nil
+        expect(third_game.reload.state_of_piece[3][2]).to eq nil
+
+        put :update, params: {id: third_game.id, coordinate: {from: "[2,1]", to: "[0,3]"}}
 
         expect(response).to redirect_to(third_game)
-        expect(third_game.reload.state_of_piece[2][1]).to eq nil
-        expect(third_game.reload.state_of_piece[3][2]).to eq nil
         expect(third_game.reload.state_of_piece[1][2]).to eq nil
-        expect(third_game.reload.state_of_piece[0][2]).to eq "R"
+        expect(third_game.reload.state_of_piece[0][3]).to eq "RK"
+      end
+    end
+    context "when a piece reaches the opposing side, they will turn into a RK" do
+      let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
+      let!(:third_game) {Game.create({name: "testing", state_of_piece:
+        [[nil, "B", nil, nil, nil, "B", nil, "B"],
+        [nil, nil, "B", nil, "R", nil , nil, nil],
+        [nil, "B", nil, nil, nil, nil, nil, "B"],
+        [nil, nil, "B", nil, nil, nil, nil, nil],
+        [nil, nil, nil, "R", nil, "B", nil, "B"],
+        [nil, nil, nil, nil, "B", nil, nil, nil],
+        [nil, "R", nil, "R", nil, "R", nil, "R"],
+        ["R", nil, "R", nil, "R", nil, "R", nil]]
+        })
+      }
+      it "R should turn into rk" do
+        sign_in first_user
+        put :update, params: {id: third_game.id, coordinate: {from: "[1,4]", to: "[0,3]"}}
+
+        expect(response).to redirect_to(third_game)
+        expect(third_game.reload.state_of_piece[1][4]).to eq nil
+        expect(third_game.reload.state_of_piece[0][3]).to eq "RK"
       end
     end
     context "when a piece reaches the opposing side, they will turn into a RK, which allows them to move backwards " do
@@ -200,20 +218,19 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
         [nil, nil, nil, "R", nil, "B", nil, "B"],
         [nil, nil, nil, nil, "B", nil, nil, nil],
         [nil, "R", nil, "R", nil, "R", nil, "R"],
-        ["R", nil, "R", nil, "R", nil, "R", nil]],
-        history_of_pieces: "[]"
+        ["R", nil, "R", nil, "R", nil, "R", nil]]
         })
       }
-      it "there should be two black piece eatten" do
+      it "RK should move backards" do
         sign_in first_user
-        put :update, params: {id: third_game.id, coordinate: {from: "[1,3]", to: "[2,4]"}}
+        put :update, params: {id: third_game.id, coordinate: {from: "[0,3]", to: "[1,4]"}}
 
         expect(response).to redirect_to(third_game)
         expect(third_game.reload.state_of_piece[1][3]).to eq nil
-        expect(third_game.reload.state_of_piece[2][4]).to eq "RK"
+        expect(third_game.reload.state_of_piece[1][4]).to eq "RK"
       end
     end
-    context "the opposing person when there are no more moves left" do
+    context "the opposing person when there are no more moves left winner is black" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
       let!(:third_game) {Game.create({name: "testing", state_of_piece:
         [[nil, nil, nil, nil, nil, nil, "BK", nil],
@@ -223,16 +240,16 @@ let(:first_game) { Game.create(name: "testing", history_of_pieces: "[]" )}
         [nil, nil, nil, nil, nil, nil, "B", nil],
         [nil, nil, nil, nil, nil, nil, nil, nil],
         ["BK", nil, nil, nil, nil, nil, "B", nil],
-        [nil, nil, nil, nil, nil, "B", nil, "B"]],
-        history_of_pieces: "[]"
+        [nil, nil, nil, nil, nil, "B", nil, "B"]]
         })
       }
       it "there should be two black piece eatten" do
         sign_in first_user
-        put :update, params: {id: third_game.id}
+        put :show, params: {id: third_game.id}
 
-        expect(response).to redirect_to(third_game)
-        expect(third_game.reload.winner).to eq "B"
+        expect(response).to render_template("show")
+        expect(response.status).to eq 200
+        expect(third_game.reload.winner).to eq "black"
       end
     end
   end

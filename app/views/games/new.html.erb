@@ -1,1 +1,5 @@
+
+<% @game.errors.full_messages.each do |message| %>
+  <%= message %>
+<% end %>
 <%= render 'form' %>
