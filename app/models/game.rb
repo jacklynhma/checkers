@@ -117,34 +117,88 @@ class Game < ApplicationRecord
   end
 
   def possible_moves(piece, row_index, column_index)
-    possible_moves = []
-    if  piece == "R" || piece == "RK" || piece == "BK" && state[row_index - 1][column_index  - 1] == nil
-      possible_moves << [row_index - 1, column_index  - 1]
-    elsif  piece == "R" || piece == "RK" || piece == "BK" && state[row_index - 1][column_index  + 1] == nil
-      possible_moves << [row_index - 1, column_index  + 1]
-    elsif  piece == "B" || piece == "RK" || piece == "BK"  && state[row_index + 1][column_index  + 1] == nil
-      possible_moves << [row_index + 1, column_index  + 1]
-    elsif  piece == "B" || piece == "RK" || piece == "BK"  && state[row_index + 1][column_index  - 1] == nil
-      possible_moves << [row_index + 1, column_index  - 1]
+    if piece == "R" || piece == "RK" || piece == "BK" && column_index == 7
+      if  piece == "R" || piece == "RK" || piece == "BK" && state_of_piece[row_index - 1][column_index  - 1] == nil
+        return true
+      end
+    elsif piece == "R" || piece == "RK" || piece == "BK" && column_index == 0
+      if  piece == "R" || piece == "RK" || piece == "BK" && state_of_piece[row_index - 1][column_index  + 1] == nil
+        return true
+      end
+    elsif piece == "B" || piece == "RK" || piece == "BK" && column_index == 0
+      if  piece == "B" || piece == "RK" || piece == "BK" && state_of_piece[row_index - 1][column_index  + 1] == nil
+        return true
+      end
+    elsif piece == "B" || piece == "RK" || piece == "BK" && column_index == 7
+      if  piece == "B" || piece == "RK" || piece == "BK" && state_of_piece[row_index - 1][column_index  - 1] == nil
+        return true
+      end
     else
-      return false
+      if  piece == "R" || piece == "RK" || piece == "BK" && state_of_piece[row_index - 1][column_index  - 1] == nil
+        return true
+      elsif  piece == "R" || piece == "RK" || piece == "BK" && state_of_piece[row_index - 1][column_index  + 1] == nil
+        return true
+      elsif  piece == "B" || piece == "RK" || piece == "BK"  && state_of_piece[row_index + 1][column_index  + 1] == nil
+        return true
+      elsif  piece == "B" || piece == "RK" || piece == "BK"  && state_of_piece[row_index + 1][column_index  - 1] == nil
+        return true
+      else
+        return false
+      end
     end
     return possible_moves
   end
 
+  def team_missing_piece
+    board = state_of_piece
+    presence_of_team_black = []
+    presence_of_team_red = []
+    board.each_with_index do |row, row_index|
+      if row.include?("B") || row.include?("BK")
+        presence_of_team_black << true
+      end
+      if row.include?("R") || row.include?("RK")
+        presence_of_team_red << true
+      end
+    end
+    if !presence_of_team_black.include?(true)
+      return "team black"
+    elsif !presence_of_team_red.include?(true)
+      return "team red"
+    else
+      return "everyone is present"
+    end
+  end
+  #
   def winner
+
     winner = "no one"
     board = state_of_piece
-    board.each_with_index do |row, row_index|
-      row.each_with_index do |piece, column_index|
-      # possible_moves(piece, row_index, column_index) == []
-        if piece&.first != "B" || piece == nil
-          winner = "red"
-        elsif piece&.first != "R" || piece == nil
-          winner = "black"
-        else
-          return false
+    black_moves = []
+    red_moves = []
+    if team_missing_piece == "team black"
+      return "Team Red Wins!"
+    elsif team_missing_piece == "team red"
+      return "Team Black Wins!"
+    elsif team_missing_piece == "everyone is present"
+      board.each_with_index do |row, row_index|
+        row.each_with_index do |piece, column_index|
+          if piece != nil && piece&.first == "B"
+              black_moves << [possible_moves(piece, row_index, column_index), piece]
+          end
+          if piece != nil && piece&.first == "R"
+            red_moves = [] << [possible_moves(piece, row_index, column_index), piece]
+          end
         end
+      end
+
+      black_moves = black_moves.select { |move| move[0] == true}
+      if !black_moves.nil?
+        winner = "Team Red Wins!"
+      end
+      red_moves = red_moves.select { |move| move[0] == true}
+      if !red_moves.nil?
+        winner = "Team Black Wins!"
       end
     end
     return winner
