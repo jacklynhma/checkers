@@ -1,16 +1,18 @@
 <%=link_to "Create a new game", new_game_path%><br />
-<% @games.each do |game| %>
-  <%= link_to game.name, game_path(game.id) %>
+<% if !@games.nil? %>
+  <% @games.each do |game| %>
+    <%= link_to game.name, game_path(game.id) %>
 
-  <!-- if current user exists -->
-  <% if current_user %>
-    <% if current_user.playing?(game) %>
-      Joined!
-      <%= link_to("Resign", resign_game_path(game.id), method: "post") %>
-    <% else %>
-      <%= link_to("Join", join_game_path(game.id), method: "post") %>
+    <!-- if current user exists -->
+    <% if current_user %>
+      <% if current_user.playing?(game) %>
+        Joined!
+        <%= link_to("Resign", resign_game_path(game.id), method: "post") %>
+      <% else %>
+        <%= link_to("Join", join_game_path(game.id), method: "post") %>
+      <% end %>
+      <br>
     <% end %>
-    <br>
   <% end %>
 <% end %>
 
