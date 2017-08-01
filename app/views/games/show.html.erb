@@ -1,5 +1,5 @@
 <div>
-<% if @game.winner != false %>
+<% if @game.winner != "no one" %>
     Winner: <%= @game.winner %>
 <% end %>
 <% @game.pieces.each do |row| %>

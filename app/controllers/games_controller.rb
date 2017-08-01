@@ -122,7 +122,7 @@ class GamesController < ApplicationController
       #that moved piece is now at the to coordinate
       state[to_row][to_column] = piece
 
-      @game.state_of_piece = state
+
       @game.history_of_pieces << [from: from_coordinate, to: to_coordinate]
       # while to_coordinate is equal to the from coordiante of another piece to eat, it is tstill the players turn
       if team == "black" && @game.required_moves(team).include?(to_coordinate + [to_row + 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row + 2, to_column - 2])
