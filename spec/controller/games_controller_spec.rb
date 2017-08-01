@@ -280,14 +280,14 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
         [[nil, nil, nil, nil, nil, nil, "BK", nil],
         [nil, nil, nil, nil, nil, nil , nil, nil],
         [nil, nil, nil, nil, nil, nil, "BK", nil],
-        [nil, nil, nil, nil, nil, "B", "B", "B"],
-        [nil, nil, nil, nil, nil, nil, "B", "R"],
-        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, "B", nil, "B"],
+        [nil, nil, nil, nil, nil, nil, "B", nil],
+        [nil, nil, nil, nil, nil, nil, nil, "R"],
         ["BK", nil, nil, nil, nil, nil, "B", nil],
         [nil, nil, nil, nil, nil, "B", nil, "B"]]
         })
       }
-      it "there should be two black piece eatten" do
+      it "team black wins" do
         sign_in first_user
         put :show, params: {id: third_game.id}
 
