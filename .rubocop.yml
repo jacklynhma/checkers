@@ -1,6 +1,6 @@
 AllCops:
   TargetRubyVersion: "2.3"
-  
+
 AllCops:
   Exclude:
     - db/schema.rb
@@ -64,7 +64,7 @@ CyclomaticComplexity:
 Delegate:
   Enabled: false
 
-DeprecatedHashMethods:
+Style/PreferredHashMethods:
   Enabled: false
 
 Documentation:
@@ -265,16 +265,16 @@ UnderscorePrefixedVariableName:
 Void:
   Enabled: false
 
-Style/AlignParameters:
+Layout/AlignParameters:
   EnforcedStyle: with_fixed_indentation
 
 Style/SymbolProc:
   Enabled: false
 
-Style/MultilineOperationIndentation:
+Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
 
-Style/EmptyLinesAroundBlockBody:
+Layout/EmptyLinesAroundBlockBody:
   Enabled: false
 
 Style/UnneededPercentQ:

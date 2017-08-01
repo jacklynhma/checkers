@@ -10,9 +10,10 @@ gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
 gem 'devise'
 gem 'simple_form'
+gem 'bootsnap', require: false
 
 group :development do
-  gem 'byebug'
+  gem 'pry-byebug'
   gem 'listen', '~> 3.0.5'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
@@ -26,7 +27,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'rails-controller-testing'
   gem 'shoulda'
-  gem 'byebug'
+  gem 'pry-byebug'
   gem 'valid_attribute'
 end
 
