@@ -230,7 +230,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
         expect(third_game.reload.state_of_piece[1][4]).to eq "RK"
       end
     end
-    context "the opposing person when there are no more moves left winner is black" do
+    context "team_misisng_piece should return team black" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
       let!(:third_game) {Game.create({name: "testing", state_of_piece:
         [[nil, nil, nil, nil, nil, nil, "BK", nil],
@@ -249,7 +249,51 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
 
         expect(response).to render_template("show")
         expect(response.status).to eq 200
-        expect(third_game.reload.winner).to eq "black"
+        expect(third_game.reload.team_missing_piece).to eq "team red"
+      end
+    end
+    context "the opposing person when there are no more moves left winner is black" do
+      let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
+      let!(:third_game) {Game.create({name: "testing", state_of_piece:
+        [[nil, nil, nil, nil, nil, nil, "BK", nil],
+        [nil, nil, nil, nil, nil, nil , nil, nil],
+        [nil, nil, nil, nil, nil, nil, "BK", nil],
+        [nil, nil, nil, nil, nil, "B", nil, "B"],
+        [nil, nil, nil, nil, nil, nil, "B", nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        ["BK", nil, nil, nil, nil, nil, "B", nil],
+        [nil, nil, nil, nil, nil, "B", nil, "B"]]
+        })
+      }
+      it "black should be declared the winner" do
+        sign_in first_user
+        put :show, params: {id: third_game.id}
+
+        expect(response).to render_template("show")
+        expect(response.status).to eq 200
+        expect(third_game.reload.winner).to eq "Team Black Wins!"
+      end
+    end
+    context "R can no longer move so Black wins " do
+      let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
+      let!(:third_game) {Game.create({name: "testing", state_of_piece:
+        [[nil, nil, nil, nil, nil, nil, "BK", nil],
+        [nil, nil, nil, nil, nil, nil , nil, nil],
+        [nil, nil, nil, nil, nil, nil, "BK", nil],
+        [nil, nil, nil, nil, nil, "B", "B", "B"],
+        [nil, nil, nil, nil, nil, nil, "B", "R"],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        ["BK", nil, nil, nil, nil, nil, "B", nil],
+        [nil, nil, nil, nil, nil, "B", nil, "B"]]
+        })
+      }
+      it "there should be two black piece eatten" do
+        sign_in first_user
+        put :show, params: {id: third_game.id}
+
+        expect(response).to render_template("show")
+        expect(response.status).to eq 200
+        expect(third_game.reload.winner).to eq "Team Black Wins!"
       end
     end
   end
