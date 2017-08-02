@@ -1,6 +1,7 @@
 source 'https://rubygems.org/'
 
 ruby '2.3.3'
+gem "active_model_serializers"
 gem 'carrierwave'
 gem 'rails', '~> 5.1.2'
 gem 'pg', '~> 0.18'
