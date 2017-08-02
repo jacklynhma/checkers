@@ -11,7 +11,6 @@ feature 'Sign up', %(
     fill_in 'Password confirmation', with: 'password'
     click_button 'Sign up'
 
-    expect(page).to have_content("Create a new game")
     expect(page).to have_content("Sign Out")
   end
 end

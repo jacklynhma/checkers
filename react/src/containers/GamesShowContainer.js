@@ -5,7 +5,7 @@ class GamesShowContainer extends Component {
   constructor(props){
     super(props);
     this.state = {
-      board: [];
+      board: [],
     }
   }
   componentDidMount(){
