@@ -18,3 +18,10 @@
 .redBG {
   background-color: #faa;
 }
+.piece {
+  border-radius: 25px;
+  padding: 20px;
+  width: 1px;
+  height: 1px;
+  background-color: #FFF;
+}
