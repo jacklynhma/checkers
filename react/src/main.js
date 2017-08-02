@@ -1,16 +1,11 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-// need to remove event listener
-$(function() {
+import App from './containers/App'
+
+document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <h1>Boo yaa</h1>,
+    <App />,
     document.getElementById('app')
-  );
-});
-// document.addEventListener('DOMContentLoaded', function() {
-//   ReactDOM.render(
-//     <App />,
-//     document.getElementById('app')
-//   )
-// })
+  )
+})
