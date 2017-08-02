@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 const NavBar = props => {
   return(
     <div>
-      herro
+    nav
       {props.children}
     </div>
   )

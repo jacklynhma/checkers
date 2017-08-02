@@ -25,9 +25,22 @@ class GamesShowContainer extends Component {
           {
             row.map((piece, columnNumber)=>{
               let colorIndex = (columnNumber+rowNumber) % 2;
-              return(
-                <div className={colors[colorIndex] + " square"}>{piece} &nbsp;</div>
-              )
+
+              if (piece == null){
+                return (<div className={colors[colorIndex] + " square"}>
+                  <div>{piece}</div>
+                  &nbsp;
+                </div>
+                )
+              }
+              else {
+                return(
+                <div className={colors[colorIndex] + " square"}>
+                  <div className="piece">{piece}</div>
+                  &nbsp;
+                </div>
+                )
+              }
             })
           }
         </div>
