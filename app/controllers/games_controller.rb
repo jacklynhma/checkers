@@ -51,11 +51,15 @@ class GamesController < ApplicationController
   end
 
 
+  # returns the row
+   def row(position)
+     position[0]
+   end
 
-  # returns the column
-  def column(position)
-    position[1]
-  end
+   # returns the column
+   def column(position)
+     position[1]
+   end
 
   def update
     @game = Game.find(params[:id])
@@ -70,13 +74,13 @@ class GamesController < ApplicationController
 
     # do stuff to the state of game, like moving the pieces
     # delete the piece on the board
-    # from_coordinate = JSON.parse(params[:coordinate][:from])
-    # to_coordinate = JSON.parse(params[:coordinate][:to])
+    from_coordinate = JSON.parse(params[:coordinate][:from])
+    to_coordinate = JSON.parse(params[:coordinate][:to])
     # is it your turn
-    to_column = coordinate(params[:coordinate])
-    from_column = coordinate(params[:coordinate])
-    from_row = coordinate(params[:coordinate])
-    to_row = coordinate(params[:coordinate])
+    to_column = column(to_coordinate)
+    from_column = column(from_coordinate)
+    from_row = row(from_coordinate)
+    to_row = row(to_coordinate)
     validates_red_moves = ((from_column + 1) != to_column) && ((from_column - 1) != to_column) || ((from_row - 1) != row(to_coordinate))
     validates_black_moves = ((from_column + 1) != to_column) && ((from_column - 1) != to_column) || ((from_row + 1) != row(to_coordinate))
     piece = state[from_row][from_column]
@@ -143,7 +147,6 @@ class GamesController < ApplicationController
 
       @game.save
 
-      # redirect to the right place
     end
     redirect_to @game
   end
