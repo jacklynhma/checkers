@@ -1,5 +1,6 @@
 class GamesController < ApplicationController
   before_action :authorize_user, except: %i[index show]
+
   def index
     @games = Game.all
   end
@@ -49,15 +50,16 @@ class GamesController < ApplicationController
     render action: "edit"
   end
 
-  # returns the row
-  def row(position)
-    position[0]
-  end
 
-  # returns the column
-  def column(position)
-    position[1]
-  end
+  # returns the row
+   def row(position)
+     position[0]
+   end
+
+   # returns the column
+   def column(position)
+     position[1]
+   end
 
   def update
     @game = Game.find(params[:id])
@@ -145,7 +147,6 @@ class GamesController < ApplicationController
 
       @game.save
 
-      # redirect to the right place
     end
     redirect_to @game
   end

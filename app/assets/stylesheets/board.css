@@ -7,8 +7,8 @@
 }
 
 .row {
-  height: 50px;
-  position: relative;
+  display: flex;
+  justify-content: center;
 }
 
 .blackBG {
