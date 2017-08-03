@@ -33,41 +33,33 @@ class Api::V1::GamesController < ApplicationController
     from_column = params[:coordinates][1]
     from_row = params[:coordinates][0]
     to_row = params[:coordinates][2]
-    validates_red_moves = ((from_column + 1) != to_column) && ((from_column - 1) != to_column) || ((from_row - 1) != to_row)
-    validates_black_moves = ((from_column + 1) != to_column) && ((from_column - 1) != to_column) || ((from_row + 1) != to_row)
-    piece = state[from_row][from_column]
-    validates_black_non_king_jump =
 
 
     if current_user.gameplayers.find_by(game_id: @game.id).present?
       team = current_user.gameplayers.find_by(game_id: @game.id).team
     end
-    if team == "black" && (@game.turn % 2 != 1)
-      flash[:notice] = "It is not your turn!"
-    elsif team == "red" && (@game.turn % 2 != 0)
+    @game.validates_move(team, from_column, to_column, from_row, to_row)
+    piece = state[from_row][from_column]
+    if @game.not_your_turn(team, @game.turn)
       flash[:notice] = "It is not your turn!"
     # Does the piece you want to move exist?
     elsif piece.nil?
       flash[:notice] = "That piece does not exist"
     # is it the player's piece?
-    elsif !(team == "black" && piece&.first == "B") && !(team == "red" && piece&.first == "R")
+    elsif @game.not_your_piece(team, piece)
       flash[:notice] = "This is not your piece"
     # make the piece move on the board
     # the move needs to within the bounds of the board
-    elsif !((to_row <= 7) && (to_row >= 0))
-      flash[:notice] = "You are off the board"
-    elsif !((to_column <= 7) && (to_column >= 0))
+    elsif @game.off_the_board(to_row, to_column)
       flash[:notice] = "You are off the board"
     # must eat
-    elsif @game.required_moves(team) != [] && !@game.required_moves(team).include?(from_coordinate + to_coordinate)
-      flash[:notice] = "There is another piece you MUST move"
-    # needs to be a legal move
+elsif @game.piece_must_moved(team, from_coordinate, to_coordinate)
+  flash[:notice] = "There is another piece you MUST move"
+# needs to be a legal move
     # if there is a piece next to you, you MUST eat it
-    elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && team === "black" && piece == "B" && validates_black_moves
-      flash[:notice] = "That is not a legal move"
-    elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && team === "red" && piece == "R" && validates_red_moves
-      flash[:notice] = "That is not a legal move"
-    elsif piece.length == 2  && !validates_red_moves && !validates_black_moves
+elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && @game.validates_move(team, from_column, to_column, from_row, to_row)
+    flash[:notice] = "That is not a legal move"
+    elsif piece.length == 2  && validates_move(red, from_column, to_column, from_row, to_row) && validates_move(black, from_column, to_column, from_row, to_row)
       flash[:notice] = "this is not how you properly use your king piece"
     else
       #if a piece is eatten, the piece should be removed from the board
@@ -101,6 +93,9 @@ class Api::V1::GamesController < ApplicationController
       end
       @game.save
       # redirect to the right place
+      if @game.winner != "no one"
+          flash[:notice] = @game.winner
+      end
     end
     render json: state
   end

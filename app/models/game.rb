@@ -29,10 +29,42 @@ class Game < ApplicationRecord
     self.history_of_pieces ||= []
   end
 
-# takes the difference between the from and to coordinate to determine
-# the eatten piece. this only applies if 2x pieces were skipped
-  # def eaten_piece?(from_coordinate, to_coordinate)
-  #   if from_coordinate - to_coordinate =
+  def not_your_turn(team, turn)
+    if team == "black" && (turn % 2 != 1)
+
+    elsif  team == "red" && (turn % 2 != 0)
+
+    end
+  end
+
+  def not_your_piece(team, piece)
+    !(team == "black" && piece&.first == "B") && !(team == "red" && piece&.first == "R")
+  end
+
+  def off_the_board(to_row, to_column)
+    if !((to_row <= 7) && (to_row >= 0))
+    elsif !((to_column <= 7) && (to_column >= 0))
+    end
+  end
+
+  def piece_must_moved(team, from_coordinate, to_coordinate)
+    required_moves(team) != [] && !required_moves(team).include?(from_coordinate + to_coordinate)
+  end
+
+  def validates_move(team, from_column, to_column, from_row, to_row)
+    if team == "red"
+      !(((from_column + 1 == to_column) || (from_column - 1 == to_column)) && (from_row - 1 == to_row))
+    elsif team == "black"
+      !(((from_column + 1 == to_column) || (from_column - 1 == to_column)) && (from_row + 1 == to_row))
+    end
+  end
+
+  # def not_a_legal_move(team, from_coordinate, to_coordinate, piece)
+  #   if team === "black" && piece == "B"
+  #   !required_moves(team).include?(from_coordinate + to_coordinate)
+  #   elsif team === "red" && piece == "R"
+  #     !required_moves(team).include?(from_coordinate + to_coordinate)
+  #   end
   # end
 
   # row_index = current piece row, integer
