@@ -1,7 +1,7 @@
 <%=link_to "Create a new game", new_game_path%><br />
 <% if !@games.nil? %>
   <% @games.each do |game| %>
-    <%= link_to game.name, game_path(game.id) %>
+    <%= link_to game.name, "/games/#{game.id}" %>
 
     <!-- if current user exists -->
     <% if current_user %>

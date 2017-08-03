@@ -1,5 +1,7 @@
 class Api::V1::GamesController < ApplicationController
   skip_before_action :verify_authenticity_token
+  # before_action :authorize_user, except: %i[index show]
+
   def index
     render json: Game.all, adapter: :json
   end
@@ -34,11 +36,15 @@ class Api::V1::GamesController < ApplicationController
     validates_red_moves = ((from_column + 1) != to_column) && ((from_column - 1) != to_column) || ((from_row - 1) != to_row)
     validates_black_moves = ((from_column + 1) != to_column) && ((from_column - 1) != to_column) || ((from_row + 1) != to_row)
     piece = state[from_row][from_column]
+    validates_black_non_king_jump =
+
 
     if current_user.gameplayers.find_by(game_id: @game.id).present?
       team = current_user.gameplayers.find_by(game_id: @game.id).team
     end
-    if (!team == "black" && (turn % 2 == 1)) || (!team == "red" && (turn % 2 == 0))
+    if team == "black" && (@game.turn % 2 != 1)
+      flash[:notice] = "It is not your turn!"
+    elsif team == "red" && (@game.turn % 2 != 0)
       flash[:notice] = "It is not your turn!"
     # Does the piece you want to move exist?
     elsif piece.nil?
@@ -61,8 +67,8 @@ class Api::V1::GamesController < ApplicationController
       flash[:notice] = "That is not a legal move"
     elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && team === "red" && piece == "R" && validates_red_moves
       flash[:notice] = "That is not a legal move"
-    elsif piece.length == 2  && validates_red_moves && validates_black_moves
-      flash[:notice] = "the king piece can move backwards"
+    elsif piece.length == 2  && !validates_red_moves && !validates_black_moves
+      flash[:notice] = "this is not how you properly use your king piece"
     else
       #if a piece is eatten, the piece should be removed from the board
       if @game.required_moves(team) != []
@@ -76,7 +82,7 @@ class Api::V1::GamesController < ApplicationController
 
       @game.history_of_pieces << [from: from_coordinate, to: to_coordinate]
       # while to_coordinate is equal to the from coordiante of another piece to eat, it is tstill the players turn
-      if team == "black" && @game.required_moves(team).include?(to_coordinate + [to_row + 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row + 2, to_column - 2])
+      if team == "black" && (to_row - from_row == 2 || to_row - from_row == -2) && (@game.required_moves(team).include?(to_coordinate + [to_row + 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row + 2, to_column - 2]))
         flash[:notice] = "you can jump again!"
       elsif team == "black"
         @game.turn += 1
@@ -88,7 +94,7 @@ class Api::V1::GamesController < ApplicationController
         @game.state_of_piece[to_row][to_column] = "RK"
       end
       #
-      if team == "red" && @game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column - 2])
+      if team == "red" &&  (to_row - from_row == 2 || to_row - from_row == -2) && @game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column - 2])
           flash[:notice] = "you can jump again!"
       elsif team == "red"
         @game.turn += 1
