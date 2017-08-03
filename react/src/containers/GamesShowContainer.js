@@ -20,7 +20,7 @@ class GamesShowContainer extends Component {
   }
 
   addAMove(formPayload){
-    debugger
+    
     fetch(`/api/v1/games/${this.props.params.id}`,{
       method: "PATCH",
       credentials: "same-origin",
@@ -48,13 +48,11 @@ class GamesShowContainer extends Component {
   handleChange(rowNumber, columnNumber){
     let newcoordinates = this.state.coordinates.concat([rowNumber, columnNumber])
     this.setState({coordinates: newcoordinates})
-    // this.handleMove(event)
   }
 
   componentDidUpdate () {
     if (this.state.coordinates.length == 4)
      {
-     //  times coordinates by board
       let formPayload = {
         coordinates: this.state.coordinates
       }
@@ -63,45 +61,44 @@ class GamesShowContainer extends Component {
      this.addAMove(formPayload)
     }
   }
-
   render(){
-    const colors = ["redBG", "blackBG"]
-    let board = this.state.board.map((row, rowNumber)=> {
-      return(
-        <div className="row">
-          {
-            row.map((piece, columnNumber)=>{
-              let colorIndex = (columnNumber+rowNumber) % 2;
-              if (piece == null){
+      const colors = ["redBG", "blackBG"]
+      let board = this.state.board.map((row, rowNumber)=> {
+        return(
+          <div className="row">
+            {
+              row.map((piece, columnNumber)=>{
+                let colorIndex = (columnNumber+rowNumber) % 2;
+                if (piece == null){
 
-                let squareclicked = () => this.handleChange(rowNumber, columnNumber)
+                  let squareclicked = () => this.handleChange(rowNumber, columnNumber)
 
-                return (<div className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
-                  <div>{piece}</div>
-                  &nbsp;
-                </div>
-                )
-              }
-              else {
-                return(
-                <div className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
-                  <div className="piece">{piece}</div>
-                  &nbsp;
-                </div>
-                )
-              }
-            })
-          }
+                  return (<div className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
+                    <div>{piece}</div>
+                    &nbsp;
+                  </div>
+                  )
+                }
+                else {
+                  return(
+                  <div className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
+                    <div className="piece">{piece}</div>
+                    &nbsp;
+                  </div>
+                  )
+                }
+              })
+            }
+          </div>
+        )
+      })
+      return (
+        <div>
+          {board}
         </div>
+
       )
-    })
-    return (
-      <div>
-        {board}
-      </div>
-
-    )
+    }
   }
-}
 
-export default GamesShowContainer
+  export default GamesShowContainer
