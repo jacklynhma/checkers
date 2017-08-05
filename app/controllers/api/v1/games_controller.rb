@@ -9,6 +9,7 @@ class Api::V1::GamesController < ApplicationController
   def show
     render json: Game.find(params[:id]), adapter: :json
   end
+
   def update
     @game = Game.find(params[:id])
 
@@ -34,33 +35,29 @@ class Api::V1::GamesController < ApplicationController
     from_row = params[:coordinates][0]
     to_row = params[:coordinates][2]
 
-
     if current_user.gameplayers.find_by(game_id: @game.id).present?
       team = current_user.gameplayers.find_by(game_id: @game.id).team
     end
-    @game.validates_move(team, from_column, to_column, from_row, to_row)
     piece = state[from_row][from_column]
     if @game.not_your_turn(team, @game.turn)
-      flash[:notice] = "It is not your turn!"
+      message = "It is not your turn!"
     # Does the piece you want to move exist?
     elsif piece.nil?
-      flash[:notice] = "That piece does not exist"
+      message = "That piece does not exist"
     # is it the player's piece?
     elsif @game.not_your_piece(team, piece)
-      flash[:notice] = "This is not your piece"
+      message = "This is not your piece"
     # make the piece move on the board
     # the move needs to within the bounds of the board
     elsif @game.off_the_board(to_row, to_column)
-      flash[:notice] = "You are off the board"
+      message = "You are off the board"
     # must eat
 elsif @game.piece_must_moved(team, from_coordinate, to_coordinate)
-  flash[:notice] = "There is another piece you MUST move"
+  message = "There is another piece you MUST move"
 # needs to be a legal move
     # if there is a piece next to you, you MUST eat it
-elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && @game.validates_move(team, from_column, to_column, from_row, to_row)
-    flash[:notice] = "That is not a legal move"
-    elsif piece.length == 2  && validates_move(red, from_column, to_column, from_row, to_row) && validates_move(black, from_column, to_column, from_row, to_row)
-      flash[:notice] = "this is not how you properly use your king piece"
+elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && !@game.validates_move(state, piece, team, from_column, to_column, from_row, to_row)
+    message = "That is not a legal move"
     else
       #if a piece is eatten, the piece should be removed from the board
       if @game.required_moves(team) != []
@@ -75,7 +72,7 @@ elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && @
       @game.history_of_pieces << [from: from_coordinate, to: to_coordinate]
       # while to_coordinate is equal to the from coordiante of another piece to eat, it is tstill the players turn
       if team == "black" && (to_row - from_row == 2 || to_row - from_row == -2) && (@game.required_moves(team).include?(to_coordinate + [to_row + 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row + 2, to_column - 2]))
-        flash[:notice] = "you can jump again!"
+        message = "you can jump again!"
       elsif team == "black"
         @game.turn += 1
       end
@@ -87,16 +84,14 @@ elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && @
       end
       #
       if team == "red" &&  (to_row - from_row == 2 || to_row - from_row == -2) && @game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column - 2])
-          flash[:notice] = "you can jump again!"
+          message = "you can jump again!"
       elsif team == "red"
         @game.turn += 1
       end
       @game.save
       # redirect to the right place
-      if @game.winner != "no one"
-          flash[:notice] = @game.winner
-      end
+
     end
-    render json: state
+    render json: {state: state, message: message, turn: @game.turn, winner: @game.winner}
   end
 end

@@ -31,9 +31,9 @@ class Game < ApplicationRecord
 
   def not_your_turn(team, turn)
     if team == "black" && (turn % 2 != 1)
-
+      return true
     elsif  team == "red" && (turn % 2 != 0)
-
+      return true
     end
   end
 
@@ -48,14 +48,33 @@ class Game < ApplicationRecord
   end
 
   def piece_must_moved(team, from_coordinate, to_coordinate)
-    required_moves(team) != [] && !required_moves(team).include?(from_coordinate + to_coordinate)
+    if required_moves(team) != [] && !required_moves(team).include?(from_coordinate + to_coordinate)
+      return true
+    end
   end
 
-  def validates_move(team, from_column, to_column, from_row, to_row)
-    if team == "red"
-      !(((from_column + 1 == to_column) || (from_column - 1 == to_column)) && (from_row - 1 == to_row))
-    elsif team == "black"
-      !(((from_column + 1 == to_column) || (from_column - 1 == to_column)) && (from_row + 1 == to_row))
+  def valid_R_move(from_column, to_column, from_row, to_row)
+    ((from_column + 1 == to_column) || (from_column - 1 == to_column)) && (from_row - 1 == to_row)
+  end
+
+  def valid_B_move(from_column, to_column, from_row, to_row)
+    ((from_column + 1 == to_column) || (from_column - 1 == to_column)) && (from_row + 1 == to_row)
+  end
+
+
+  def validates_move(state, piece, team, from_column, to_column, from_row, to_row)
+    unless state[to_row][to_column] != nil
+      if piece == "RK" || piece == "BK"
+        valid_R_move(from_column, to_column, from_row, to_row) || valid_B_move(from_column, to_column, from_row, to_row)
+      elsif team == "red"
+        if piece == "R"
+          valid_R_move(from_column, to_column, from_row, to_row)
+        end
+      elsif team == "black"
+        if piece == "B"
+          valid_B_move(from_column, to_column, from_row, to_row)
+        end
+      end
     end
   end
 
@@ -130,13 +149,12 @@ class Game < ApplicationRecord
       row.each_with_index do |piece, column_index|
 
         if team == "red" && piece == "RK"
-          next_move = can_eat_down?(row_index, column_index, "B")
+          next_move = can_eat_down?(row_index, column_index, "B") || can_eat_up?(row_index, column_index, "B")
         elsif team == "black" && piece == "BK"
-          next_move = can_eat_up?(row_index, column_index, "R")
-        end
-        if team == "red" && piece&.first == "R"
+          next_move = can_eat_up?(row_index, column_index, "R") || can_eat_down?(row_index, column_index, "R")
+        elsif team == "red" && piece == "R"
           next_move = can_eat_up?(row_index, column_index, "B")
-        elsif team == "black" && piece&.first == "B"
+        elsif team == "black" && piece == "B"
           next_move = can_eat_down?(row_index, column_index, "R")
         end
         unless next_move.blank?
