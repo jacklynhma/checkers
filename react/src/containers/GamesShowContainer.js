@@ -6,21 +6,28 @@ class GamesShowContainer extends Component {
     super(props);
     this.state = {
       board: [],
-      coordinates: []
+      coordinates: [],
+      message: null,
+      turn: null,
+      winner: null
     }
     this.addAMove = this.addAMove.bind(this)
     this.handleChange = this.handleChange.bind(this)
+    setInterval(this.updateGame.bind(this), 1000)
   }
   componentDidMount(){
+    this.updateGame()
+  }
+  updateGame() {
+
     fetch(`/api/v1/games/${this.props.params.id}`)
     .then(response => { return response.json()})
     .then(body => {
-      this.setState({ board: body.game.state_of_piece})
+      this.setState({ board: body.game.state_of_piece, turn: body.game.turn, winner: body.game.winner})
     })
   }
 
   addAMove(formPayload){
-    
     fetch(`/api/v1/games/${this.props.params.id}`,{
       method: "PATCH",
       credentials: "same-origin",
@@ -40,7 +47,7 @@ class GamesShowContainer extends Component {
     })
     .then(response => response.json())
     .then(responseData => {
-      this.setState({ board: responseData})
+      this.setState({ board: responseData.state, message: responseData.message, turn: responseData.turn})
     })
     .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
@@ -62,18 +69,29 @@ class GamesShowContainer extends Component {
     }
   }
   render(){
+      let winner = "";
+        if (this.state.winner == "no one"){
+          winner == ""
+        } else {
+          winner = this.state.winner
+        }
+      let turn = "";
+        if (this.state.turn % 2 == 1 && this.state.winner == "no one") {
+          turn = "It is black's turn"
+        }
+        else if (this.state.turn % 2 == 0 && this.state.winner == "no one"){
+          turn = "It is red's turn"
+        }
       const colors = ["redBG", "blackBG"]
       let board = this.state.board.map((row, rowNumber)=> {
         return(
-          <div className="row">
+          <div key={`row-${rowNumber}`}className="row">
             {
               row.map((piece, columnNumber)=>{
                 let colorIndex = (columnNumber+rowNumber) % 2;
+                let squareclicked = () => this.handleChange(rowNumber, columnNumber)
                 if (piece == null){
-
-                  let squareclicked = () => this.handleChange(rowNumber, columnNumber)
-
-                  return (<div className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
+                  return (<div  key={`${rowNumber},${columnNumber}`} className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
                     <div>{piece}</div>
                     &nbsp;
                   </div>
@@ -81,7 +99,7 @@ class GamesShowContainer extends Component {
                 }
                 else {
                   return(
-                  <div className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
+                  <div  key={`${rowNumber},${columnNumber}`} className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
                     <div className="piece">{piece}</div>
                     &nbsp;
                   </div>
@@ -92,11 +110,24 @@ class GamesShowContainer extends Component {
           </div>
         )
       })
-      return (
-        <div>
-          {board}
-        </div>
 
+      return (
+        <div className="messages">
+          <h1>
+          {this.state.message != null &&
+            this.state.message
+          }
+          </h1>
+          <div>
+            <h1>
+            {winner}
+            {turn}
+            </h1>
+          </div>
+          <div>
+            {board}
+          </div>
+        </div>
       )
     }
   }

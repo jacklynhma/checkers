@@ -1,17 +1,28 @@
-<%=link_to "Create a new game", new_game_path%><br />
-<% if !@games.nil? %>
-  <% @games.each do |game| %>
-    <%= link_to game.name, "/games/#{game.id}" %>
 
-    <!-- if current user exists -->
-    <% if current_user %>
-      <% if current_user.playing?(game) %>
-        Joined!
-        <%= link_to("Resign", resign_game_path(game.id), method: "post") %>
-      <% else %>
-        <%= link_to("Join", join_game_path(game.id), method: "post") %>
-      <% end %>
-      <br>
-    <% end %>
-  <% end %>
-<% end %>
+  <div class="games" >
+    <h1> List of Games: </h1>
+    <div class="bordertable">
+      <div class="gamelist">
+        <% if !@games.nil? %>
+          <% @games.each do |game| %>
+            <%= link_to game.name, "/games/#{game.id}" %>
+
+            <!-- if current user exists -->
+            <% if current_user %>
+              <% if current_user.playing?(game) %>
+                Joined!
+                <%= link_to("Resign", resign_game_path(game.id), method: "post") %>
+              <% else %>
+                <%= link_to("Join", join_game_path(game.id), method: "post") %>
+              <% end %>
+
+            <% end %>
+            <br>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    <br>
+    <button class="btn" type="submit"><%=link_to "Create a new game", new_game_path%></button><br />
+
+  </div>
