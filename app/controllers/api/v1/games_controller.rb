@@ -12,7 +12,20 @@ class Api::V1::GamesController < ApplicationController
     if current_user && current_user.playing?(@game)
       team = current_user.gameplayers.find_by(game_id: @game.id).team
     end
-    render json: {game: @game, team: team, winner: @game.winner}, adapter: :json
+
+    black_team_players = []
+    red_team_players = []
+    @game.gameplayers.each do |game|
+      if game.team == "black"
+        black_team_players << game.user.first_name
+      end
+    end
+    @game.gameplayers.each do |game|
+      if game.team == "red"
+        red_team_players << game.user.first_name
+      end
+    end
+    render json: {game: @game, team: team, winner: @game.winner, redplayers: red_team_players, blackplayers: black_team_players}, adapter: :json
   end
 
   def update
@@ -75,23 +88,16 @@ class Api::V1::GamesController < ApplicationController
 
       @game.history_of_pieces << [from: from_coordinate, to: to_coordinate]
       # while to_coordinate is equal to the from coordiante of another piece to eat, it is tstill the players turn
-      if team == "black" && (to_row - from_row == 2 || to_row - from_row == -2) && (@game.required_moves(team).include?(to_coordinate + [to_row + 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row + 2, to_column - 2]))
-        message = "you can jump again!"
-      elsif team == "black"
-        @game.turn += 1
-      end
+
+      @game.second_jump(team, to_row, from_row, to_coordinate)
 
       if piece == "B" && to_row == 7
         @game.state_of_piece[to_row][to_column] = "BK"
       elsif piece == "R" && to_row == 0
         @game.state_of_piece[to_row][to_column] = "RK"
       end
-      #
-      if team == "red" &&  (to_row - from_row == 2 || to_row - from_row == -2) && (@game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column - 2]))
-          message = "you can jump again!"
-      elsif team == "red"
-        @game.turn += 1
-      end
+
+
       @game.save
       # redirect to the right place
 
