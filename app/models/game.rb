@@ -9,15 +9,9 @@ class Game < ApplicationRecord
   def after_initialize
     setup_game
   end
-
-# return array of members
-
-
-
   def playing?(user)
     user_ids.include?(user.id)
   end
-
 
 
   def setup_game
@@ -67,9 +61,25 @@ class Game < ApplicationRecord
     ((from_column + 1 == to_column) || (from_column - 1 == to_column)) && (from_row + 1 == to_row)
   end
 
-
-  def validates_move(state, piece, team, from_column, to_column, from_row, to_row)
-    unless state[to_row][to_column] != nil
+# checks the teams of the players
+# returns an array of both teams
+  def team_players
+    black_team_players = []
+    red_team_players = []
+    array_of_teams = []
+    self.gameplayers.each do |game|
+      if game.team == "black"
+        black_team_players << game.user.first_name
+      elsif game.team == "red"
+        red_team_players << game.user.first_name
+      end
+    end
+    array_of_teams << black_team_players
+    array_of_teams << red_team_players
+     return array_of_teams
+  end
+  def validates_move( piece, team, from_column, to_column, from_row, to_row)
+    unless state_of_piece[to_row][to_column] != nil
       if piece == "RK" || piece == "BK"
         valid_R_move(from_column, to_column, from_row, to_row) || valid_B_move(from_column, to_column, from_row, to_row)
       elsif team == "red"
@@ -84,13 +94,28 @@ class Game < ApplicationRecord
     end
   end
 
-  # def not_a_legal_move(team, from_coordinate, to_coordinate, piece)
-  #   if team === "black" && piece == "B"
-  #   !required_moves(team).include?(from_coordinate + to_coordinate)
-  #   elsif team === "red" && piece == "R"
-  #     !required_moves(team).include?(from_coordinate + to_coordinate)
-  #   end
-  # end
+  def error_message(from_row, from_column, team, piece, to_row, to_column, from_coordinate, to_coordinate)
+    if self.not_your_turn(team, self.turn)
+      "It is not your turn!"
+    # Does the piece you want to move exist?
+    elsif piece.nil?
+      "That piece does not exist"
+    # is it the player's piece?
+  elsif self.not_your_piece(team, piece)
+      "This is not your piece"
+    # make the piece move on the board
+    # the move needs to within the bounds of the board
+  elsif self.off_the_board(to_row, to_column)
+      "You are off the board"
+    # must eat
+  elsif self.piece_must_moved(team, from_coordinate, to_coordinate)
+      "There is another piece you MUST move"
+    # needs to be a legal move
+    # if there is a piece next to you, you MUST eat it
+  elsif !self.required_moves(team).include?(from_coordinate + to_coordinate) && !self.validates_move(piece, team, from_column, to_column, from_row, to_row)
+      "That is not a legal move"
+    end
+  end
 
   # row_index = current piece row, integer
   #column_index = current pice column, integer
@@ -210,7 +235,17 @@ class Game < ApplicationRecord
       end
     end
   end
+  # if a piece reaches the end of opoosing board, it will be kinged
+  # renaming a piece king
+  def becoming_king(piece, to_row, to_column)
+    if piece == "B" && to_row == 7
+      self.state_of_piece[to_row][to_column] = "BK"
+    elsif piece == "R" && to_row == 0
+      self.state_of_piece[to_row][to_column] = "RK"
+    end
+  end
 
+  # returns a message if a piece can job again
   def second_jump(team, to_row, from_row, to_coordinate)
     if team == "black" && (to_row - from_row == 2 || to_row - from_row == -2) && self.required_moves(team, to_coordinate).length > 0
       message = "you can jump again!"

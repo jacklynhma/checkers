@@ -13,6 +13,12 @@ class User < ApplicationRecord
     game_ids.include?(game.id)
   end
 
+  def defining_team(game)
+    if self.playing?(game)
+      return self.gameplayers.find_by(game_id: game.id).team
+    end
+  end
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 end
