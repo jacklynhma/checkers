@@ -335,7 +335,6 @@ class Game < ApplicationRecord
   end
   #
   def winner
-
     winner = "no one"
     board = state_of_piece
     black_moves = []
