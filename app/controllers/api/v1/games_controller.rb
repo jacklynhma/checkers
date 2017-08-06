@@ -28,17 +28,13 @@ class Api::V1::GamesController < ApplicationController
 
     from_coordinate = [params[:coordinates][0], params[:coordinates][1]]
     to_coordinate = [params[:coordinates][2], params[:coordinates][3]]
-    to_column = params[:coordinates][3]
-    from_column = params[:coordinates][1]
-    from_row = params[:coordinates][0]
-    to_row = params[:coordinates][2]
 
     team = current_user.defining_team(@game)
     piece = @game.state_of_piece[from_coordinate[0]][from_coordinate[1]]
     if @game.error_message(team, piece, from_coordinate, to_coordinate)
       message = @game.error_message(team, piece, from_coordinate, to_coordinate)
     else
-      @game.steps_to_do_if_no_error_messages(from_row, from_column, to_row, to_column, from_coordinate, to_coordinate, piece, team)
+      @game.steps_to_do_if_no_error_messages(from_coordinate, to_coordinate, piece, team)
       @game.save
     end
     render json: {game: @game, message: message, turn: @game.turn, winner: @game.winner, team: team}
