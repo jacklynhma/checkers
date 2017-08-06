@@ -20,9 +20,7 @@ class Api::V1::GamesController < ApplicationController
   end
 
   def update
-
     @game = Game.find(params[:id])
-    state = @game.state_of_piece
     # make sure a piece deletes from a board before you put a piece on the board
     message = ""
 
