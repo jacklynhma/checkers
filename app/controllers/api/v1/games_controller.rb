@@ -12,95 +12,30 @@ class Api::V1::GamesController < ApplicationController
     if current_user && current_user.playing?(@game)
       team = current_user.gameplayers.find_by(game_id: @game.id).team
     end
+    array_of_teams = @game.team_players
 
-    black_team_players = []
-    red_team_players = []
-    @game.gameplayers.each do |game|
-      if game.team == "black"
-        black_team_players << game.user.first_name
-      end
-    end
-    @game.gameplayers.each do |game|
-      if game.team == "red"
-        red_team_players << game.user.first_name
-      end
-    end
-    render json: {game: @game, team: team, winner: @game.winner, redplayers: red_team_players, blackplayers: black_team_players}, adapter: :json
+    render json: {game: @game, team: team, winner: @game.winner,
+      redplayers: array_of_teams[1], blackplayers: array_of_teams[0]},
+      adapter: :json
   end
 
   def update
 
     @game = Game.find(params[:id])
-
     state = @game.state_of_piece
-
-    # params[:coordinate][:from]
-    # params[:coordinate][:to]
-
     # make sure a piece deletes from a board before you put a piece on the board
     message = ""
 
-    # do stuff to the state of game, like moving the pieces
-    # # delete the piece on the board
-    # from_coordinate = JSON.parse(params[:coordinate][:from])
-    # to_coordinate = JSON.parse(params[:coordinate][:to])
-    # is it your turn
     from_coordinate = [params[:coordinates][0], params[:coordinates][1]]
     to_coordinate = [params[:coordinates][2], params[:coordinates][3]]
-    to_column = params[:coordinates][3]
-    from_column = params[:coordinates][1]
-    from_row = params[:coordinates][0]
-    to_row = params[:coordinates][2]
 
-    if current_user.playing?(@game)
-      team = current_user.gameplayers.find_by(game_id: @game.id).team
-    end
-    piece = state[from_row][from_column]
-    if @game.not_your_turn(team, @game.turn)
-      message = "It is not your turn!"
-    # Does the piece you want to move exist?
-    elsif piece.nil?
-      message = "That piece does not exist"
-    # is it the player's piece?
-    elsif @game.not_your_piece(team, piece)
-      message = "This is not your piece"
-    # make the piece move on the board
-    # the move needs to within the bounds of the board
-    elsif @game.off_the_board(to_row, to_column)
-      message = "You are off the board"
-    # must eat
-    elsif @game.piece_must_moved(team, from_coordinate, to_coordinate)
-      message = "There is another piece you MUST move"
-    # needs to be a legal move
-    # if there is a piece next to you, you MUST eat it
-    elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && !@game.validates_move(state, piece, team, from_column, to_column, from_row, to_row)
-        message = "That is not a legal move"
+    team = current_user.defining_team(@game)
+    piece = @game.state_of_piece[from_coordinate[0]][from_coordinate[1]]
+    if @game.error_message(team, piece, from_coordinate, to_coordinate)
+      message = @game.error_message(team, piece, from_coordinate, to_coordinate)
     else
-      #if a piece is eatten, the piece should be removed from the board
-      if @game.required_moves(team) != []
-        state[(from_row + to_row)/2][(from_column + to_column)/2] = nil
-      end
-      #moved piece is no longer at the from coordinate
-      state[from_row][from_column] = nil
-      #that moved piece is now at the to coordinate
-      state[to_row][to_column] = piece
-
-
-      @game.history_of_pieces << [from: from_coordinate, to: to_coordinate]
-      # while to_coordinate is equal to the from coordiante of another piece to eat, it is tstill the players turn
-
-      @game.second_jump(team, to_row, from_row, to_coordinate)
-
-      if piece == "B" && to_row == 7
-        @game.state_of_piece[to_row][to_column] = "BK"
-      elsif piece == "R" && to_row == 0
-        @game.state_of_piece[to_row][to_column] = "RK"
-      end
-
-
+      @game.steps_to_do_if_no_error_messages(from_coordinate, to_coordinate, piece, team)
       @game.save
-      # redirect to the right place
-
     end
     render json: {game: @game, message: message, turn: @game.turn, winner: @game.winner, team: team}
   end

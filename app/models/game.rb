@@ -9,15 +9,9 @@ class Game < ApplicationRecord
   def after_initialize
     setup_game
   end
-
-# return array of members
-
-
-
   def playing?(user)
     user_ids.include?(user.id)
   end
-
 
 
   def setup_game
@@ -44,7 +38,8 @@ class Game < ApplicationRecord
   end
 
   def not_your_piece(team, piece)
-    !(team == "black" && piece&.first == "B") && !(team == "red" && piece&.first == "R")
+    !(team == "black" && piece&.first == "B") && !(team == "red" &&
+    piece&.first == "R")
   end
 
   def off_the_board(to_row, to_column)
@@ -54,63 +49,129 @@ class Game < ApplicationRecord
   end
 
   def piece_must_moved(team, from_coordinate, to_coordinate)
-    if required_moves(team) != [] && !required_moves(team).include?(from_coordinate + to_coordinate)
+    if required_moves(team) != [] &&
+      !required_moves(team).include?(from_coordinate + to_coordinate)
       return true
     end
   end
 
   def valid_R_move(from_column, to_column, from_row, to_row)
-    ((from_column + 1 == to_column) || (from_column - 1 == to_column)) && (from_row - 1 == to_row)
+    ((from_column + 1 == to_column) || (from_column - 1 == to_column)) &&
+    (from_row - 1 == to_row)
   end
 
   def valid_B_move(from_column, to_column, from_row, to_row)
-    ((from_column + 1 == to_column) || (from_column - 1 == to_column)) && (from_row + 1 == to_row)
+    ((from_column + 1 == to_column) || (from_column - 1 == to_column)) &&
+    (from_row + 1 == to_row)
   end
 
+# checks the teams of the players
+# returns an array of both teams
+  def team_players
+    black_team_players = []
+    red_team_players = []
+    array_of_teams = []
+    self.gameplayers.each do |game|
+      if game.team == "black"
+        black_team_players << game.user.first_name
+      elsif game.team == "red"
+        red_team_players << game.user.first_name
+      end
+    end
+    array_of_teams << black_team_players
+    array_of_teams << red_team_players
+     return array_of_teams
+  end
 
-  def validates_move(state, piece, team, from_column, to_column, from_row, to_row)
-    unless state[to_row][to_column] != nil
+  def validates_move( piece, team, from_coordinate, to_coordinate)
+    unless state_of_piece[to_coordinate[0]][to_coordinate[1]] != nil
       if piece == "RK" || piece == "BK"
-        valid_R_move(from_column, to_column, from_row, to_row) || valid_B_move(from_column, to_column, from_row, to_row)
+        valid_R_move(from_coordinate[1], to_coordinate[1], from_coordinate[0],
+        to_coordinate[0]) || valid_B_move(from_coordinate[1], to_coordinate[1],
+        from_coordinate[0], to_coordinate[0])
       elsif team == "red"
         if piece == "R"
-          valid_R_move(from_column, to_column, from_row, to_row)
+          valid_R_move(from_coordinate[1], to_coordinate[1], from_coordinate[0],
+          to_coordinate[0])
         end
       elsif team == "black"
         if piece == "B"
-          valid_B_move(from_column, to_column, from_row, to_row)
+          valid_B_move(from_coordinate[1], to_coordinate[1], from_coordinate[0],
+          to_coordinate[0])
         end
       end
     end
   end
 
-  # def not_a_legal_move(team, from_coordinate, to_coordinate, piece)
-  #   if team === "black" && piece == "B"
-  #   !required_moves(team).include?(from_coordinate + to_coordinate)
-  #   elsif team === "red" && piece == "R"
-  #     !required_moves(team).include?(from_coordinate + to_coordinate)
-  #   end
-  # end
+# the piece that is jumped is assigned nil
+  def a_piece_jumped(team, from_row, to_row, from_column, to_column)
+    if required_moves(team) != []
+      state_of_piece[(from_row + to_row)/2][(from_column + to_column)/2] = nil
+    end
+  end
+
+  def steps_to_do_if_no_error_messages(from_coordinate, to_coordinate,
+    piece, team)
+    # if a piece is eatten, the piece should be removed from the board
+    a_piece_jumped(team, from_coordinate[0], to_coordinate[0],
+      from_coordinate[1], to_coordinate[1])
+    # moved piece is no longer at the from coordinate
+    state_of_piece[from_coordinate[0]][from_coordinate[1]] = nil
+    # that moved piece is now at the to coordinate
+    state_of_piece[to_coordinate[0]][to_coordinate[1]] = piece
+    history_of_pieces << [from: from_coordinate, to: to_coordinate]
+    second_jump(team, to_coordinate[0], from_coordinate[0], to_coordinate)
+    becoming_king(piece, to_coordinate[0], to_coordinate[1])
+  end
+
+  def error_message(team, piece, from_coordinate, to_coordinate)
+    if not_your_turn(team, turn)
+      "It is not your turn!"
+    # Does the piece you want to move exist?
+    elsif piece.nil?
+      "That piece does not exist"
+    # is it the player's piece?
+    elsif not_your_piece(team, piece)
+      "This is not your piece"
+      # make the piece move on the board
+      # the move needs to within the bounds of the board
+    elsif off_the_board(to_coordinate[0], to_coordinate[1])
+      "You are off the board"
+      # must eat
+    elsif piece_must_moved(team, from_coordinate, to_coordinate)
+      "There is another piece you MUST move"
+      # needs to be a legal move
+      # if there is a piece next to you, you MUST eat it
+    elsif !required_moves(team).include?(from_coordinate + to_coordinate) &&
+      !validates_move(piece, team, from_coordinate, to_coordinate)
+      "That is not a legal move"
+    end
+  end
 
   # row_index = current piece row, integer
-  #column_index = current pice column, integer
-  #checks if there is a neighboring opposing piece and if therei s a empty space diagonally
+  # column_index = current pice column, integer
+  # checks if there is a neighboring opposing piece and if therei s a empty
+  # space diagonally
   # always return the destination or empty string or nil
   def can_eat_down?(row_index, column_index, eatingcolor)
     state = state_of_piece
     unless row_index > 5
       if column_index == 7
-        if state[row_index + 1][column_index  - 1]&.first == eatingcolor && state[row_index + 2][column_index - 2] == nil
+        if state[row_index + 1][column_index  - 1]&.first == eatingcolor &&
+          state[row_index + 2][column_index - 2] == nil
           return [row_index + 2, column_index - 2]
         end
       elsif column_index == 0
-        if state[row_index + 1][column_index + 1]&.first == eatingcolor && state[row_index + 2][column_index + 2] == nil
+        if state[row_index + 1][column_index + 1]&.first == eatingcolor &&
+          state[row_index + 2][column_index + 2] == nil
           return [row_index + 2, column_index + 2]
         end
       else
-        if state[row_index + 1][column_index  - 1]&.first == eatingcolor && state[row_index + 2][column_index - 2] == nil
+        if state[row_index + 1][column_index  - 1]&.first == eatingcolor &&
+          state[row_index + 2][column_index - 2] == nil
           return [row_index + 2, column_index - 2]
-        elsif state[row_index + 1][column_index + 1]&.first == eatingcolor && state[row_index + 2][column_index + 2] == nil
+        elsif state[row_index + 1][column_index + 1]&.first == eatingcolor &&
+          state[row_index + 2][column_index + 2] == nil
           return [row_index + 2, column_index + 2]
         else
           return nil
@@ -123,18 +184,22 @@ class Game < ApplicationRecord
     state = state_of_piece
     unless row_index < 2
       if column_index == 0
-        if state[row_index - 1][column_index + 1]&.first == eatingcolor && state[row_index - 2][column_index  + 2] == nil
+        if state[row_index - 1][column_index + 1]&.first == eatingcolor &&
+          state[row_index - 2][column_index  + 2] == nil
           return [row_index - 2, column_index + 2]
         end
       elsif column_index == 7
-        if state[row_index - 1][column_index - 1]&.first == eatingcolor && state[row_index - 2][column_index  - 2] == nil
+        if state[row_index - 1][column_index - 1]&.first == eatingcolor &&
+          state[row_index - 2][column_index  - 2] == nil
           return [row_index - 2, column_index  - 2]
         end
       else
-        if state[row_index - 1][column_index - 1]&.first == eatingcolor && state[row_index - 2][column_index  - 2] == nil
+        if state[row_index - 1][column_index - 1]&.first == eatingcolor &&
+          state[row_index - 2][column_index  - 2] == nil
 
           return  [row_index - 2, column_index - 2]
-        elsif state[row_index - 1][column_index + 1]&.first == eatingcolor && state[row_index - 2][column_index  + 2] == nil
+        elsif state[row_index - 1][column_index + 1]&.first == eatingcolor &&
+          state[row_index - 2][column_index  + 2] == nil
           return [row_index - 2, column_index + 2]
         else
           return nil
@@ -147,7 +212,8 @@ class Game < ApplicationRecord
     return state_of_piece
   end
 
-# pass in the team and optional from coordinate to see if there is a required move w/ this starting from coordinate
+# pass in the team and optional from coordinate to see if there is a required
+# move w/ this starting from coordinate
 # it will return an array of required moves
   def required_moves(team, from_coordinate = nil)
     board = state_of_piece
@@ -156,9 +222,11 @@ class Game < ApplicationRecord
       row.each_with_index do |piece, column_index|
 
         if team == "red" && piece == "RK"
-          next_move = can_eat_down?(row_index, column_index, "B") || can_eat_up?(row_index, column_index, "B")
+          next_move = can_eat_down?(row_index, column_index, "B") ||
+          can_eat_up?(row_index, column_index, "B")
         elsif team == "black" && piece == "BK"
-          next_move = can_eat_up?(row_index, column_index, "R") || can_eat_down?(row_index, column_index, "R")
+          next_move = can_eat_up?(row_index, column_index, "R") ||
+          can_eat_down?(row_index, column_index, "R")
         elsif team == "red" && piece == "R"
           next_move = can_eat_up?(row_index, column_index, "B")
         elsif team == "black" && piece == "B"
@@ -180,29 +248,37 @@ class Game < ApplicationRecord
   def possible_moves(piece, row_index, column_index)
     unless (row_index > 6 && piece == "B") || (row_index < 1 && piece == "R")
       if (piece == "R" || piece == "RK" || piece == "BK") && column_index == 7
-        if (piece == "R" || piece == "RK" || piece == "BK") && state_of_piece[row_index - 1][column_index  - 1] == nil
+        if (piece == "R" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index - 1][column_index  - 1] == nil
           return true
         end
       elsif (piece == "R" || piece == "RK" || piece == "BK") && column_index == 0
-        if (piece == "R" || piece == "RK" || piece == "BK") && state_of_piece[row_index - 1][column_index  + 1] == nil
+        if (piece == "R" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index - 1][column_index  + 1] == nil
           return true
         end
       elsif (piece == "B" || piece == "RK" || piece == "BK" )&& column_index == 0
-        if (piece == "B" || piece == "RK" || piece == "BK") && state_of_piece[row_index - 1][column_index  + 1] == nil
+        if (piece == "B" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index - 1][column_index  + 1] == nil
           return true
         end
       elsif (piece == "B" || piece == "RK" || piece == "BK" )&& column_index == 7
-        if (piece == "B" || piece == "RK" || piece == "BK") && state_of_piece[row_index - 1][column_index  - 1] == nil
+        if (piece == "B" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index - 1][column_index  - 1] == nil
           return true
         end
       else
-        if (piece == "R" || piece == "RK" || piece == "BK") && state_of_piece[row_index - 1][column_index  - 1] == nil
+        if (piece == "R" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index - 1][column_index  - 1] == nil
           return true
-        elsif (piece == "R" || piece == "RK" || piece == "BK") && state_of_piece[row_index - 1][column_index  + 1] == nil
+        elsif (piece == "R" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index - 1][column_index  + 1] == nil
           return true
-        elsif (piece == "B" || piece == "RK" || piece == "BK") && state_of_piece[row_index + 1][column_index  + 1] == nil
+        elsif (piece == "B" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index + 1][column_index  + 1] == nil
           return true
-        elsif (piece == "B" || piece == "RK" || piece == "BK") && state_of_piece[row_index + 1][column_index  - 1] == nil
+        elsif (piece == "B" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index + 1][column_index  - 1] == nil
           return true
         else
           return false
@@ -210,14 +286,26 @@ class Game < ApplicationRecord
       end
     end
   end
+  # if a piece reaches the end of opoosing board, it will be kinged
+  # renaming a piece king
+  def becoming_king(piece, to_row, to_column)
+    if piece == "B" && to_row == 7
+      self.state_of_piece[to_row][to_column] = "BK"
+    elsif piece == "R" && to_row == 0
+      self.state_of_piece[to_row][to_column] = "RK"
+    end
+  end
 
+  # returns a message if a piece can job again
   def second_jump(team, to_row, from_row, to_coordinate)
-    if team == "black" && (to_row - from_row == 2 || to_row - from_row == -2) && self.required_moves(team, to_coordinate).length > 0
-      message = "you can jump again!"
+    if team == "black" && (to_row - from_row == 2 || to_row - from_row == -2) &&
+      required_moves(team, to_coordinate).length > 0
+      "you can jump again!"
     elsif team == "black"
       self.turn += 1
-    elsif team == "red" &&  (to_row - from_row == 2 || to_row - from_row == -2) && self.required_moves(team, to_coordinate).length > 0
-        message = "you can jump again!"
+    elsif team == "red" &&  (to_row - from_row == 2 || to_row - from_row == -2) &&
+      required_moves(team, to_coordinate).length > 0
+      "you can jump again!"
     elsif team == "red"
       self.turn += 1
     end
