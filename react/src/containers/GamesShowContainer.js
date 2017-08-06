@@ -10,7 +10,9 @@ class GamesShowContainer extends Component {
       message: null,
       turn: null,
       winner: null,
-      team: null
+      team: null,
+      redplayers: [],
+      blackplayers: []
     }
     this.addAMove = this.addAMove.bind(this)
     this.handleChange = this.handleChange.bind(this)
@@ -26,7 +28,9 @@ class GamesShowContainer extends Component {
     .then(response => { return response.json()})
     .then(body => {
 
-      this.setState({ board: body.game.state_of_piece, turn: body.game.turn, winner: body.winner, team: body.team})
+      this.setState({ board: body.game.state_of_piece, turn: body.game.turn,
+        winner: body.winner, team: body.team, redplayers: body.redplayers,
+        blackplayers: body.blackplayers})
     })
   }
 
@@ -85,6 +89,28 @@ class GamesShowContainer extends Component {
       else if (this.state.turn % 2 == 0 && this.state.winner == "no one"){
         turn = "It is red's turn"
       }
+      let redTeam = ''
+      if (this.state.redplayers != []){
+        redTeam = this.state.redplayers.map((player) => {
+          return (
+            <div> {player}</div>
+          )
+        })
+      }
+      let team =""
+      if (this.state.team == "none"){
+        team = <h3>You are a spectator</h3>
+      } else if (this.state.team != "none"){
+        team = <h3> You are on team {this.state.team}</h3>
+      }
+      let blackTeam = ''
+      if (this.state.blackplayers != []){
+        blackTeam = this.state.blackplayers.map((player) => {
+          return (
+            <div> {player}</div>
+          )
+        })
+      }
       const colors = ["redBG", "blackBG"]
       let board = this.state.board.map((row, rowNumber)=> {
         return(
@@ -101,6 +127,7 @@ class GamesShowContainer extends Component {
                 } else if (piece == "R"){
                   pieceDesign = "redpiece"
                 }
+
                 return (<div  key={`${rowNumber},${columnNumber}`} className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
                   <div className={pieceDesign}>{piece}</div>
                   &nbsp;
@@ -127,7 +154,17 @@ class GamesShowContainer extends Component {
           </div>
           <div>
             {board}
-            <h3>You are on team {this.state.team}</h3>
+            {team}
+            <div className="row">
+              <div className="col-xs-6">
+                <h4>Red team:</h4>
+                {redTeam}
+              </div>
+              <div className="col-xs-6">
+                <h4>Black team:</h4>
+                {blackTeam}
+              </div>
+            </div>
           </div>
         </div>
       )

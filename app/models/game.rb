@@ -10,9 +10,15 @@ class Game < ApplicationRecord
     setup_game
   end
 
+# return array of members
+
+
+
   def playing?(user)
     user_ids.include?(user.id)
   end
+
+
 
   def setup_game
     self.state_of_piece = [
@@ -141,8 +147,9 @@ class Game < ApplicationRecord
     return state_of_piece
   end
 
-
-  def required_moves(team)
+# pass in the team and optional from coordinate to see if there is a required move w/ this starting from coordinate
+# it will return an array of required moves
+  def required_moves(team, from_coordinate = nil)
     board = state_of_piece
     moves = []
     board.each_with_index do |row, row_index|
@@ -159,7 +166,11 @@ class Game < ApplicationRecord
         end
         unless next_move.blank?
           move = [row_index, column_index].concat(next_move)
-          moves << move
+          if from_coordinate != nil && from_coordinate == [row_index, column_index]
+            moves << move
+          elsif from_coordinate == nil
+            moves << move
+          end
         end
       end
     end
@@ -197,6 +208,18 @@ class Game < ApplicationRecord
           return false
         end
       end
+    end
+  end
+
+  def second_jump(team, to_row, from_row, to_coordinate)
+    if team == "black" && (to_row - from_row == 2 || to_row - from_row == -2) && self.required_moves(team, to_coordinate).length > 0
+      message = "you can jump again!"
+    elsif team == "black"
+      self.turn += 1
+    elsif team == "red" &&  (to_row - from_row == 2 || to_row - from_row == -2) && self.required_moves(team, to_coordinate).length > 0
+        message = "you can jump again!"
+    elsif team == "red"
+      self.turn += 1
     end
   end
 
