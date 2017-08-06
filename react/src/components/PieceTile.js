@@ -1,12 +1,23 @@
 import React from 'react'
 
 const PieceTile = (props) => {
-  let colors = ["redBG", "blackBG"]
+  let pieceDesign = ""
+  const colors = ["redBG", "blackBG"]
   let colorIndex = (props.columnNumber+props.rowNumber) % 2;
-  return(
-    <div className={colors[colorIndex] + " square"}>
-      <div >{props.piece} &nbsp;</div>
-    </div>
+  let squareclicked = () => props.handleChange(props.rowNumber, props.columnNumber)
+  if (props.piece == null){
+    pieceDesign = ""
+  } else if (props.piece == "B") {
+    pieceDesign = "blackpiece"
+  } else if (props.piece == "R"){
+    pieceDesign = "redpiece"
+  }
+
+  return (<div  key={`${props.rowNumber},${props.columnNumber}`}
+    className={colors[colorIndex] + " square"} onClick={squareclicked}>
+    <div className={pieceDesign}>{props.piece}</div>
+    &nbsp;
+  </div>
   )
 }
 

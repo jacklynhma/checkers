@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import NavBar from '../components/NavBar'
+import NavBar from '../components/NavBar';
+import PieceTile from '../components/PieceTile'
 
 class GamesShowContainer extends Component {
   constructor(props){
@@ -111,27 +112,19 @@ class GamesShowContainer extends Component {
           )
         })
       }
-      const colors = ["redBG", "blackBG"]
+
       let board = this.state.board.map((row, rowNumber)=> {
         return(
           <div key={`row-${rowNumber}`}className="row">
             {
               row.map((piece, columnNumber)=>{
-                let pieceDesign = ""
-                let colorIndex = (columnNumber+rowNumber) % 2;
-                let squareclicked = () => this.handleChange(rowNumber, columnNumber)
-                if (piece == null){
-                  pieceDesign = ""
-                } else if (piece == "B") {
-                  pieceDesign = "blackpiece"
-                } else if (piece == "R"){
-                  pieceDesign = "redpiece"
-                }
-
-                return (<div  key={`${rowNumber},${columnNumber}`} className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
-                  <div className={pieceDesign}>{piece}</div>
-                  &nbsp;
-                </div>
+                return (
+                  <PieceTile
+                    columnNumber = {columnNumber}
+                    rowNumber = {rowNumber}
+                    handleChange = {this.handleChange}
+                    piece = {piece}
+                  />
                 )
               })
             }
