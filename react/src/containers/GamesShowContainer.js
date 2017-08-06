@@ -9,21 +9,24 @@ class GamesShowContainer extends Component {
       coordinates: [],
       message: null,
       turn: null,
-      winner: null
+      winner: null,
+      team: null
     }
     this.addAMove = this.addAMove.bind(this)
     this.handleChange = this.handleChange.bind(this)
-    setInterval(this.updateGame.bind(this), 1000)
+    setInterval(this.getGame.bind(this), 1000)
   }
   componentDidMount(){
-    this.updateGame()
+    this.getGame()
   }
-  updateGame() {
-
-    fetch(`/api/v1/games/${this.props.params.id}`)
+  getGame() {
+    fetch(`/api/v1/games/${this.props.params.id}`, {
+      credentials: "same-origin"
+    })
     .then(response => { return response.json()})
     .then(body => {
-      this.setState({ board: body.game.state_of_piece, turn: body.game.turn, winner: body.game.winner})
+
+      this.setState({ board: body.game.state_of_piece, turn: body.game.turn, winner: body.winner, team: body.team})
     })
   }
 
@@ -47,7 +50,7 @@ class GamesShowContainer extends Component {
     })
     .then(response => response.json())
     .then(responseData => {
-      this.setState({ board: responseData.state, message: responseData.message, turn: responseData.turn})
+      this.setState({ board: responseData.game.state_of_piece, message: responseData.message, turn: responseData.turn})
     })
     .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
@@ -69,42 +72,40 @@ class GamesShowContainer extends Component {
     }
   }
   render(){
-      let winner = "";
-        if (this.state.winner == "no one"){
-          winner == ""
-        } else {
-          winner = this.state.winner
-        }
-      let turn = "";
-        if (this.state.turn % 2 == 1 && this.state.winner == "no one") {
-          turn = "It is black's turn"
-        }
-        else if (this.state.turn % 2 == 0 && this.state.winner == "no one"){
-          turn = "It is red's turn"
-        }
+    let winner = "";
+      if (this.state.winner == "no one"){
+        winner == ""
+      } else {
+        winner = this.state.winner
+      }
+    let turn = "";
+      if (this.state.turn % 2 == 1 && this.state.winner == "no one") {
+        turn = "It is black's turn"
+      }
+      else if (this.state.turn % 2 == 0 && this.state.winner == "no one"){
+        turn = "It is red's turn"
+      }
       const colors = ["redBG", "blackBG"]
       let board = this.state.board.map((row, rowNumber)=> {
         return(
           <div key={`row-${rowNumber}`}className="row">
             {
               row.map((piece, columnNumber)=>{
+                let pieceDesign = ""
                 let colorIndex = (columnNumber+rowNumber) % 2;
                 let squareclicked = () => this.handleChange(rowNumber, columnNumber)
                 if (piece == null){
-                  return (<div  key={`${rowNumber},${columnNumber}`} className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
-                    <div>{piece}</div>
-                    &nbsp;
-                  </div>
-                  )
+                  pieceDesign = ""
+                } else if (piece == "B") {
+                  pieceDesign = "blackpiece"
+                } else if (piece == "R"){
+                  pieceDesign = "redpiece"
                 }
-                else {
-                  return(
-                  <div  key={`${rowNumber},${columnNumber}`} className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
-                    <div className="piece">{piece}</div>
-                    &nbsp;
-                  </div>
-                  )
-                }
+                return (<div  key={`${rowNumber},${columnNumber}`} className={colors[colorIndex] + " square"} onClick={() => this.handleChange(rowNumber, columnNumber)}>
+                  <div className={pieceDesign}>{piece}</div>
+                  &nbsp;
+                </div>
+                )
               })
             }
           </div>
@@ -126,6 +127,7 @@ class GamesShowContainer extends Component {
           </div>
           <div>
             {board}
+            <h3>You are on team {this.state.team}</h3>
           </div>
         </div>
       )

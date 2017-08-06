@@ -7,10 +7,16 @@ class Api::V1::GamesController < ApplicationController
   end
 
   def show
-    render json: Game.find(params[:id]), adapter: :json
+    @game = Game.find(params[:id])
+    team = "none"
+    if current_user && current_user.playing?(@game)
+      team = current_user.gameplayers.find_by(game_id: @game.id).team
+    end
+    render json: {game: @game, team: team, winner: @game.winner}, adapter: :json
   end
 
   def update
+
     @game = Game.find(params[:id])
 
     state = @game.state_of_piece
@@ -26,8 +32,6 @@ class Api::V1::GamesController < ApplicationController
     # from_coordinate = JSON.parse(params[:coordinate][:from])
     # to_coordinate = JSON.parse(params[:coordinate][:to])
     # is it your turn
-
-
     from_coordinate = [params[:coordinates][0], params[:coordinates][1]]
     to_coordinate = [params[:coordinates][2], params[:coordinates][3]]
     to_column = params[:coordinates][3]
@@ -35,7 +39,7 @@ class Api::V1::GamesController < ApplicationController
     from_row = params[:coordinates][0]
     to_row = params[:coordinates][2]
 
-    if current_user.gameplayers.find_by(game_id: @game.id).present?
+    if current_user.playing?(@game)
       team = current_user.gameplayers.find_by(game_id: @game.id).team
     end
     piece = state[from_row][from_column]
@@ -52,12 +56,12 @@ class Api::V1::GamesController < ApplicationController
     elsif @game.off_the_board(to_row, to_column)
       message = "You are off the board"
     # must eat
-elsif @game.piece_must_moved(team, from_coordinate, to_coordinate)
-  message = "There is another piece you MUST move"
-# needs to be a legal move
+    elsif @game.piece_must_moved(team, from_coordinate, to_coordinate)
+      message = "There is another piece you MUST move"
+    # needs to be a legal move
     # if there is a piece next to you, you MUST eat it
-elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && !@game.validates_move(state, piece, team, from_column, to_column, from_row, to_row)
-    message = "That is not a legal move"
+    elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && !@game.validates_move(state, piece, team, from_column, to_column, from_row, to_row)
+        message = "That is not a legal move"
     else
       #if a piece is eatten, the piece should be removed from the board
       if @game.required_moves(team) != []
@@ -83,7 +87,7 @@ elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && !
         @game.state_of_piece[to_row][to_column] = "RK"
       end
       #
-      if team == "red" &&  (to_row - from_row == 2 || to_row - from_row == -2) && @game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column - 2])
+      if team == "red" &&  (to_row - from_row == 2 || to_row - from_row == -2) && (@game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column + 2]) || @game.required_moves(team).include?(to_coordinate + [to_row - 2, to_column - 2]))
           message = "you can jump again!"
       elsif team == "red"
         @game.turn += 1
@@ -92,6 +96,6 @@ elsif !@game.required_moves(team).include?(from_coordinate + to_coordinate) && !
       # redirect to the right place
 
     end
-    render json: {state: state, message: message, turn: @game.turn, winner: @game.winner}
+    render json: {game: @game, message: message, turn: @game.turn, winner: @game.winner, team: team}
   end
 end

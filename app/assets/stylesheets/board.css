@@ -11,22 +11,30 @@
 }
 
 .blackBG {
-  background-color: #ccc;
+  background-color: #CCCCCC;
 }
 
 .redBG {
-  background-color: #faa;
+  background-color: white;
+
 }
-.piece {
+div.blackpiece {
   border-radius: 25px;
   padding: 20px;
   width: 1px;
   height: 1px;
-  background-color: #FFF;
+  background-color: #222222;
 }
-div.bordertable {
 
+
+div.redpiece {
+  border-radius: 25px;
+  padding: 20px;
+  width: 1px;
+  height: 1px;
+  background-color: #c04242;
 }
+
 div.gamelist {
   border: 1px solid black;
   overflow: scroll;
@@ -39,8 +47,13 @@ div.gamelist {
   text-align: center;
 }
 
-.container-fluid {
-  background-color: #ffa;
+div.container-fluid {
+  background-color: #284378;
+  border: none;
+}
+
+nav.navbar {
+  border: none;
 }
 
 .games {
@@ -49,8 +62,8 @@ div.gamelist {
 }
 
 .checkerssignup {
-    display: flex;
-   justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 .messages {
   text-align: center;
