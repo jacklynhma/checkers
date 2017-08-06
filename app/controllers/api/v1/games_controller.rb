@@ -34,9 +34,9 @@ class Api::V1::GamesController < ApplicationController
     to_row = params[:coordinates][2]
 
     team = current_user.defining_team(@game)
-    piece = @game.state_of_piece[from_row][from_column]
-    if @game.error_message(from_row, from_column, team, piece, to_row, to_column, from_coordinate, to_coordinate)
-      message = @game.error_message(from_row, from_column, team, piece, to_row, to_column, from_coordinate, to_coordinate)
+    piece = @game.state_of_piece[from_coordinate[0]][from_coordinate[1]]
+    if @game.error_message(team, piece, from_coordinate, to_coordinate)
+      message = @game.error_message(team, piece, from_coordinate, to_coordinate)
     else
       @game.steps_to_do_if_no_error_messages(from_row, from_column, to_row, to_column, from_coordinate, to_coordinate, piece, team)
       @game.save

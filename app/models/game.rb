@@ -114,7 +114,7 @@ class Game < ApplicationRecord
     becoming_king(piece, to_row, to_column)
   end
 
-  def error_message(from_row, from_column, team, piece, to_row, to_column, from_coordinate, to_coordinate)
+  def error_message(team, piece, from_coordinate, to_coordinate)
     if not_your_turn(team, turn)
       "It is not your turn!"
     # Does the piece you want to move exist?
@@ -125,14 +125,14 @@ class Game < ApplicationRecord
       "This is not your piece"
       # make the piece move on the board
       # the move needs to within the bounds of the board
-    elsif off_the_board(to_row, to_column)
+    elsif off_the_board(to_coordinate[0], to_coordinate[1])
       "You are off the board"
       # must eat
     elsif piece_must_moved(team, from_coordinate, to_coordinate)
       "There is another piece you MUST move"
       # needs to be a legal move
       # if there is a piece next to you, you MUST eat it
-    elsif !required_moves(team).include?(from_coordinate + to_coordinate) && !validates_move(piece, team, from_column, to_column, from_row, to_row)
+    elsif !required_moves(team).include?(from_coordinate + to_coordinate) && !validates_move(piece, team, from_coordinate[1], to_coordinate[1], from_coordinate[0], to_coordinate[0])
       "That is not a legal move"
     end
   end
