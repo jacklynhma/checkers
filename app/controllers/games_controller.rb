@@ -11,14 +11,15 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
   end
 
-
-
   # Assigning players to teams
   def join
+    binding.pry
     @game = Game.find(params[:id])
-    if @game.gameplayers.where(team: "red").count.zero?
+    if @game.gameplayers.where(team: "red").count <  @game.gameplayers.where(team: "black").count
       @game.gameplayers.create(user: current_user, team: "red")
-    elsif @game.gameplayers.where(team: "black").count.zero?
+    elsif @game.gameplayers.where(team: "black").count < @game.gameplayers.where(team: "red").count
+      @game.gameplayers.create(user: current_user, team: "black")
+    elsif @game.gameplayers.where(team: "black").count == @game.gameplayers.where(team: "red").count
       @game.gameplayers.create(user: current_user, team: "black")
     end
     redirect_to @game
