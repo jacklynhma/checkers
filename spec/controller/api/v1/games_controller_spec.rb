@@ -281,6 +281,29 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
         expect(third_game.reload.turn).to eq 3
       end
     end
+    context "When r moves next to B, their turn should end" do
+      let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
+      let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+        [[nil, "B", nil, "B", nil, "B", nil, "B"],
+        ["B", nil, "B", nil, "B", nil , "B", nil],
+        [nil, nil, nil, "B", nil, "B", nil, "B"],
+        [nil, nil, "B", nil, nil, nil, "B", nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        ["R", nil, "R", nil, "R", nil, "R", nil],
+        [nil, "R", nil, "R", nil, "R", nil, "R"],
+        ["R", nil, "R", nil, nil, nil, "R", nil]]
+        })
+      }
+      it "the board should remain the same" do
+        sign_in first_user
+        put :update, params: {id: third_game.id, coordinates: [5, 4, 4, 3]}, as: :json
+
+
+        expect(third_game.reload.state_of_piece[5][4]).to eq nil
+        expect(third_game.reload.state_of_piece[4][3]).to eq "R"
+        expect(third_game.reload.turn).to eq 3
+      end
+    end
     context "When B moves next to R, their turn should end" do
       let!(:third_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: third_game.id )}
       let!(:third_game) {Game.create({name: "testing", turn: 1, state_of_piece:
