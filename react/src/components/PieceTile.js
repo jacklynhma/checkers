@@ -8,9 +8,9 @@ const PieceTile = (props) => {
   if (props.piece == null){
     piece = <div></div>
   } else if (props.piece == "B") {
-    piece = <div className="blackpiece"><p></p></div>
+    piece = <div className="blackpiece"></div>
   } else if (props.piece == "R"){
-    piece = <div className="redpiece"><p></p></div>
+    piece = <div className="redpiece"></div></div>
   } else if (props.piece == "RK"){
     piece = <div className="kingredpiece" ><img src="http://icons.iconarchive.com/icons/pino/peanuts/32/King-Snoopy-icon.png"></img></div>
   } else if (props.piece == "BK"){
