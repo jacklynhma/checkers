@@ -13,7 +13,8 @@ class GamesShowContainer extends Component {
       winner: null,
       team: null,
       redplayers: [],
-      blackplayers: []
+      blackplayers: [],
+      name: null
     }
     this.addAMove = this.addAMove.bind(this)
     this.handleChange = this.handleChange.bind(this)
@@ -31,7 +32,7 @@ class GamesShowContainer extends Component {
 
       this.setState({ board: body.game.state_of_piece, turn: body.game.turn,
         winner: body.winner, team: body.team, redplayers: body.redplayers,
-        blackplayers: body.blackplayers})
+        blackplayers: body.blackplayers, name: body.game.name})
     })
   }
 
@@ -138,12 +139,16 @@ class GamesShowContainer extends Component {
           {this.state.message != null &&
             this.state.message
           }
+          Title:
+          {this.state.name != null &&
+            this.state.name
+          }
           </h1>
           <div>
-            <h1>
+            <h2>
             {winner}
             {turn}
-            </h1>
+          </h2>
           </div>
           <div>
             {board}

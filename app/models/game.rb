@@ -43,8 +43,8 @@ class Game < ApplicationRecord
   end
 
   def off_the_board(to_row, to_column)
-    if !((to_row <= 7) && (to_row >= 0))
-    elsif !((to_column <= 7) && (to_column >= 0))
+    if !((to_row <= 7) && (to_row >= 0)) || !((to_column <= 7) && (to_column >= 0))
+      return true
     end
   end
 
@@ -155,13 +155,15 @@ class Game < ApplicationRecord
   # always return the destination or empty string or nil
   def can_eat_down?(row_index, column_index, eatingcolor)
     state = state_of_piece
-    unless row_index > 5
-      if column_index == 7
+
+    if row_index + 2 <= 7
+      if column_index == 7 && column_index == 6
         if state[row_index + 1][column_index  - 1]&.first == eatingcolor &&
           state[row_index + 2][column_index - 2] == nil
+          # need to write a condition that it is on the board
           return [row_index + 2, column_index - 2]
         end
-      elsif column_index == 0
+      elsif column_index == 0 && column_index == 1
         if state[row_index + 1][column_index + 1]&.first == eatingcolor &&
           state[row_index + 2][column_index + 2] == nil
           return [row_index + 2, column_index + 2]
@@ -182,13 +184,13 @@ class Game < ApplicationRecord
 
   def can_eat_up?(row_index, column_index, eatingcolor)
     state = state_of_piece
-    unless row_index < 2
-      if column_index == 0
+    if row_index - 2 >= 0
+      if column_index == 0 && column_index == 1
         if state[row_index - 1][column_index + 1]&.first == eatingcolor &&
           state[row_index - 2][column_index  + 2] == nil
           return [row_index - 2, column_index + 2]
         end
-      elsif column_index == 7
+      elsif column_index == 7 && column_index == 6
         if state[row_index - 1][column_index - 1]&.first == eatingcolor &&
           state[row_index - 2][column_index  - 2] == nil
           return [row_index - 2, column_index  - 2]
@@ -196,7 +198,6 @@ class Game < ApplicationRecord
       else
         if state[row_index - 1][column_index - 1]&.first == eatingcolor &&
           state[row_index - 2][column_index  - 2] == nil
-
           return  [row_index - 2, column_index - 2]
         elsif state[row_index - 1][column_index + 1]&.first == eatingcolor &&
           state[row_index - 2][column_index  + 2] == nil
@@ -220,7 +221,6 @@ class Game < ApplicationRecord
     moves = []
     board.each_with_index do |row, row_index|
       row.each_with_index do |piece, column_index|
-
         if team == "red" && piece == "RK"
           next_move = can_eat_down?(row_index, column_index, "B") ||
           can_eat_up?(row_index, column_index, "B")
@@ -233,8 +233,11 @@ class Game < ApplicationRecord
           next_move = can_eat_down?(row_index, column_index, "R")
         end
         unless next_move.blank?
+          # discard the move if it would take the piece off the board
           move = [row_index, column_index].concat(next_move)
-          if from_coordinate != nil && from_coordinate == [row_index, column_index]
+          if off_the_board(next_move[0], next_move[1])
+            # do nothing
+          elsif from_coordinate != nil && from_coordinate == [row_index, column_index]
             moves << move
           elsif from_coordinate == nil
             moves << move
