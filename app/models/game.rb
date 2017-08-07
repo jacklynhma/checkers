@@ -163,7 +163,6 @@ class Game < ApplicationRecord
   # always return the destination or empty string or nil
   def can_eat_down?(row_index, column_index, eatingcolor)
     state = state_of_piece
-
     if row_index + 2 <= 7
       if column_index == 7 && column_index == 6
         if state[row_index + 1][column_index  - 1]&.first == eatingcolor &&

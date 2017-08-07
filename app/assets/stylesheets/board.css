@@ -3,6 +3,9 @@
   display: inline-block;
   width: 50px;
   height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .row {
@@ -24,8 +27,21 @@ div.blackpiece {
   width: 1px;
   height: 1px;
   background-color: #222222;
+  box-shadow: 5px 5px 5px #888888;
 }
 
+div.kingblackpiece {
+  border-radius: 25px;
+  padding: 20px;
+  width: 1px;
+  height: 1px;
+  background-color: #222222;
+  box-shadow: 5px 5px 5px #888888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
 
 div.redpiece {
   border-radius: 25px;
@@ -33,6 +49,22 @@ div.redpiece {
   width: 1px;
   height: 1px;
   background-color: #c04242;
+  box-shadow: 5px 5px 5px #888888;
+}
+img {
+
+}
+
+div.kingredpiece {
+  border-radius: 25px;
+  padding: 20px;
+  width: 1px;
+  height: 1px;
+  background-color: #c04242;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 5px 5px 5px #888888;
 }
 
 div.gamelist {
