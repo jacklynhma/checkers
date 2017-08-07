@@ -1,9 +1,11 @@
 import GamesShowContainer from '../../src/containers/GamesShowContainer';
 import PieceTile from '../../src/components/PieceTile';
 
+
 describe('GamesShowContainer', () => {
   let wrapper;
   beforeEach(() => {
+
     spyOn(GamesShowContainer.prototype, 'componentDidMount')
     wrapper = mount(
       <GamesShowContainer
@@ -60,5 +62,6 @@ describe('GamesShowContainer', () => {
     it('should render the game name', () => {
       expect(wrapper.text()).toMatch("test")
     })
+
   })
-})
+});

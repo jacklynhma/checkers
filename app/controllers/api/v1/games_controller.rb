@@ -28,6 +28,7 @@ class Api::V1::GamesController < ApplicationController
     from_coordinate = [params[:coordinates][0], params[:coordinates][1]]
     to_coordinate = [params[:coordinates][2], params[:coordinates][3]]
 
+
     team = current_user.defining_team(@game)
     piece = @game.state_of_piece[from_coordinate[0]][from_coordinate[1]]
     if @game.error_message(team, piece, from_coordinate, to_coordinate)
