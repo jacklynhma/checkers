@@ -15,7 +15,7 @@ const PieceTile = (props) => {
 
   return (<div  key={`${props.rowNumber},${props.columnNumber}`}
     className={colors[colorIndex] + " square"} onClick={squareclicked}>
-    <div className={pieceDesign}>{props.piece}</div>
+    <div className={pieceDesign}><p>{props.piece}</p></div>
     &nbsp;
   </div>
   )

@@ -93,6 +93,90 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
         ["R", nil, "R", nil, "R", nil, "R", nil]]
         })
       }
+      context "piece B should not be required to eat piece R" do
+        let!(:second_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: second_game.id )}
+        let!(:second_game) {Game.create({name: "testing", state_of_piece:
+          [[nil, "B", nil, "B", nil, "B", nil, "B"],
+          ["B", nil, "B", nil, "B", nil , "B", nil],
+          [nil, nil, nil, "B", nil, "B", nil, "R"],
+          [nil, nil, "B", nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil, nil],
+          ["R", nil, "R", nil, nil, nil, "R", nil],
+          [nil, "R", nil, "R", nil, "R", nil, "R"],
+          ["R", nil, "R", nil, "R", nil, "R", nil]]
+          })
+        }
+        it "an error should not occur" do
+          sign_in first_user
+          put :update, params: {id: second_game.id, coordinates: [2, 5, 3, 6]}, as: :json
+
+          expect(second_game.reload.state_of_piece[2][5]).to eq nil
+          expect(second_game.reload.state_of_piece[3][6]).to eq "B"
+        end
+      end
+      context "piece B should not be required to eat piece R" do
+        let!(:second_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: second_game.id )}
+        let!(:second_game) {Game.create({name: "testing", state_of_piece:
+          [[nil, "B", nil, "B", nil, "B", nil, "B"],
+          ["B", nil, "B", nil, "B", nil , "B", nil],
+          [nil, nil, nil, "B", nil, "B", nil, "R"],
+          [nil, nil, nil, nil, nil, nil, nil, nil],
+          [nil, "B", nil, nil, nil, nil, nil, nil],
+          ["R", nil, "R", nil, nil, nil, "R", nil],
+          [nil, "R", nil, "R", nil, "R", nil, "R"],
+          ["R", nil, "R", nil, "R", nil, "R", nil]]
+          })
+        }
+        it "an error should not occur" do
+          sign_in first_user
+          put :update, params: {id: second_game.id, coordinates: [1, 0, 2, 1]}, as: :json
+
+          expect(second_game.reload.state_of_piece[1][0]).to eq nil
+          expect(second_game.reload.state_of_piece[2][1]).to eq "B"
+        end
+      end
+      context "piece R should not be required to eat piece B" do
+        let!(:second_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: second_game.id )}
+        let!(:second_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+          [[nil, "B", nil, "B", nil, "B", nil, "B"],
+          ["B", nil, "B", nil, "B", nil , "B", nil],
+          [nil, nil, nil, "B", nil, "B", nil, nil],
+          ["B", nil, nil, nil, nil, nil, nil, nil],
+          [nil, "R", nil, nil, nil, nil, nil, nil],
+          ["R", nil, nil, nil, nil, nil, "R", nil],
+          [nil, "R", nil, "R", nil, "R", nil, "R"],
+          ["R", nil, "R", nil, "R", nil, "R", nil]]
+          })
+        }
+        it "an error should not occur" do
+          sign_in first_user
+          put :update, params: {id: second_game.id, coordinates: [4, 1, 3, 2]}, as: :json
+
+          expect(second_game.reload.state_of_piece[4][1]).to eq nil
+          expect(second_game.reload.state_of_piece[3][2]).to eq "R"
+        end
+      end
+      context "piece R should not be required to eat piece B" do
+        let!(:second_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: second_game.id )}
+        let!(:second_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+          [[nil, "B", nil, "B", nil, "B", nil, "B"],
+          ["B", nil, "B", nil, "B", nil , "B", nil],
+          [nil, nil, nil, "B", nil, "B", nil, nil],
+          ["B", nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil, "B"],
+          ["R", nil, nil, nil, nil, nil, "R", nil],
+          [nil, "R", nil, "R", nil, "R", nil, "R"],
+          ["R", nil, "R", nil, "R", nil, "R", nil]]
+          })
+        }
+        it "an error should not occur" do
+          sign_in first_user
+          put :update, params: {id: second_game.id, coordinates: [5, 6, 4, 5]}, as: :json
+
+          expect(second_game.reload.state_of_piece[5][6]).to eq nil
+          expect(second_game.reload.state_of_piece[4][5]).to eq "R"
+        end
+      end
       it "nothing should happen" do
         sign_in first_user
         put :update, params: {id: third_game.id, coordinates: [4, 3, 3, 2]}, as: :json
