@@ -34,6 +34,8 @@ class Game < ApplicationRecord
       return true
     elsif  team == "red" && (turn % 2 != 0)
       return true
+    else
+      return false
     end
   end
 
@@ -43,24 +45,27 @@ class Game < ApplicationRecord
   end
 
   def off_the_board(to_row, to_column)
-    if !((to_row <= 7) && (to_row >= 0)) || !((to_column <= 7) && (to_column >= 0))
-      return true
-    end
+   !((to_row <= 7) && (to_row >= 0)) || !((to_column <= 7) && (to_column >= 0))
+
   end
 
   def piece_must_moved(team, from_coordinate, to_coordinate)
     if required_moves(team) != [] &&
       !required_moves(team).include?(from_coordinate + to_coordinate)
       return true
+    else
+      return false
     end
   end
+  # will return true if R piece is a valid move
 
-  def valid_R_move(from_column, to_column, from_row, to_row)
+  def valid_R_move(from_row, from_column, to_row, to_column)
     ((from_column + 1 == to_column) || (from_column - 1 == to_column)) &&
     (from_row - 1 == to_row)
   end
 
-  def valid_B_move(from_column, to_column, from_row, to_row)
+# will return true if B piece is a valid move
+  def valid_B_move(from_row, from_column, to_row, to_column)
     ((from_column + 1 == to_column) || (from_column - 1 == to_column)) &&
     (from_row + 1 == to_row)
   end
@@ -73,9 +78,9 @@ class Game < ApplicationRecord
     array_of_teams = []
     self.gameplayers.each do |game|
       if game.team == "black"
-        black_team_players << game.user.first_name
+        black_team_players << game.user
       elsif game.team == "red"
-        red_team_players << game.user.first_name
+        red_team_players << game.user
       end
     end
     array_of_teams << black_team_players
@@ -86,18 +91,18 @@ class Game < ApplicationRecord
   def validates_move( piece, team, from_coordinate, to_coordinate)
     unless state_of_piece[to_coordinate[0]][to_coordinate[1]] != nil
       if piece == "RK" || piece == "BK"
-        valid_R_move(from_coordinate[1], to_coordinate[1], from_coordinate[0],
-        to_coordinate[0]) || valid_B_move(from_coordinate[1], to_coordinate[1],
-        from_coordinate[0], to_coordinate[0])
+        valid_R_move(from_coordinate[0], from_coordinate[1], to_coordinate[0],
+        to_coordinate[1]) || valid_B_move(from_coordinate[0], from_coordinate[1],
+        to_coordinate[0], to_coordinate[1])
       elsif team == "red"
         if piece == "R"
-          valid_R_move(from_coordinate[1], to_coordinate[1], from_coordinate[0],
-          to_coordinate[0])
+          valid_R_move(from_coordinate[0], from_coordinate[1], to_coordinate[0],
+          to_coordinate[1])
         end
       elsif team == "black"
         if piece == "B"
-          valid_B_move(from_coordinate[1], to_coordinate[1], from_coordinate[0],
-          to_coordinate[0])
+          valid_B_move(from_coordinate[0], from_coordinate[1], to_coordinate[0],
+          to_coordinate[1])
         end
       end
     end
@@ -107,6 +112,9 @@ class Game < ApplicationRecord
   def a_piece_jumped(team, from_row, to_row, from_column, to_column)
     if required_moves(team) != []
       state_of_piece[(from_row + to_row)/2][(from_column + to_column)/2] = nil
+      return true
+    else
+      return false
     end
   end
 
