@@ -29,7 +29,6 @@ class GamesShowContainer extends Component {
     })
     .then(response => { return response.json()})
     .then(body => {
-
       this.setState({ board: body.game.state_of_piece, turn: body.game.turn,
         winner: body.winner, team: body.team, redplayers: body.redplayers,
         blackplayers: body.blackplayers, name: body.game.name})
@@ -95,7 +94,7 @@ class GamesShowContainer extends Component {
       if (this.state.redplayers != []){
         redTeam = this.state.redplayers.map((player) => {
           return (
-            <div> {player}</div>
+            <div> {player.first_name}</div>
           )
         })
       }
@@ -109,7 +108,7 @@ class GamesShowContainer extends Component {
       if (this.state.blackplayers != []){
         blackTeam = this.state.blackplayers.map((player) => {
           return (
-            <div> {player}</div>
+            <div> {player.first_name}</div>
           )
         })
       }
