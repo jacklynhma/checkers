@@ -3,7 +3,7 @@ require 'byebug'
 require 'devise'
 
 RSpec.describe Api::V1::GamesController, type: :controller do
-let(:first_game) { Game.create(name: "testing" )}
+let!(:first_game) { Game.create(name: "testing" )}
 let!(:first_user) { User.create(first_name: "jackie", email: "jackie@gmail.com", password: "apples")}
 let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: first_game.id )}
 
@@ -209,6 +209,29 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
       end
     end
 
+    context "B piece should not be forced to eat B piece since space after jump is off the board" do
+      let!(:third_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: third_game.id )}
+      let!(:third_game) {Game.create({name: "testing", turn: 1, state_of_piece:
+        [[nil, "B", nil, "B", nil, "B", nil, "B"],
+        ["B", nil, "B", nil, "B", nil , "B", nil],
+        [nil, "B", nil, nil, nil, "B", nil, nil],
+        [nil, nil, nil, nil, "B", nil, "B", nil],
+        [nil, nil, nil, "R", nil, nil, nil, nil],
+        ["R", nil, "R", nil, nil, nil, "B", nil],
+        [nil, "R", nil, "R", nil, "R", nil, "R"],
+        ["R", nil, "R", nil, "R", nil, "R", nil]]
+        })
+      }
+      it "B should not be forced to eat R " do
+        sign_in first_user
+        put :update, params: {id: third_game.id, coordinates: [3, 6, 4, 7]}, as: :json
+
+
+        expect(third_game.reload.state_of_piece[3][6]).to eq nil
+        expect(third_game.reload.state_of_piece[4][7]).to eq "B"
+      end
+    end
+
     context "R piece can jump twice if there is an opposing piece next to it and there is an empty space" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
       let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
@@ -224,12 +247,15 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
       }
       it "if required move is not null then the turn should be the same" do
         sign_in first_user
-        put :update, params: {id: third_game.id, turn: 2, coordinates: [4, 3, 2, 1]}, as: :json
 
-        expect(third_game.reload.turn).to eq 2
-        expect(third_game.reload.state_of_piece[2][1]).to eq "R"
+        put :update, params: {id: third_game.id, coordinates: [4, 3, 2, 1]}, as: :json
+
+
+
         expect(third_game.reload.state_of_piece[4][3]).to eq nil
+        expect(third_game.reload.state_of_piece[2][1]).to eq "R"
         expect(third_game.reload.state_of_piece[3][2]).to eq nil
+        expect(third_game.reload.turn).to eq 2
       end
     end
     context "R should become RK" do
@@ -471,54 +497,8 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
       it "there should be two black piece eatten" do
         sign_in first_user
         put :show, params: {id: third_game.id}
-
-\
         expect(response.status).to eq 200
         expect(third_game.reload.team_missing_piece).to eq "team red"
-      end
-    end
-    context "the opposing person when there are no more moves left winner is black" do
-      let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", state_of_piece:
-        [[nil, nil, nil, nil, nil, nil, "BK", nil],
-        [nil, nil, nil, nil, nil, nil , nil, nil],
-        [nil, nil, nil, nil, nil, nil, "BK", nil],
-        [nil, nil, nil, nil, nil, "B", nil, "B"],
-        [nil, nil, nil, nil, nil, nil, "B", nil],
-        [nil, nil, nil, nil, nil, nil, nil, nil],
-        ["BK", nil, nil, nil, nil, nil, "B", nil],
-        [nil, nil, nil, nil, nil, "B", nil, "B"]]
-        })
-      }
-      it "black should be declared the winner" do
-        sign_in first_user
-        put :show, params: {id: third_game.id}
-
-
-        expect(response.status).to eq 200
-        expect(third_game.reload.winner).to eq "Team Black Wins!"
-      end
-    end
-    context "R can no longer move so Black wins " do
-      let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", state_of_piece:
-        [[nil, nil, nil, nil, nil, nil, "BK", nil],
-        [nil, nil, nil, nil, nil, nil , nil, nil],
-        [nil, nil, nil, nil, nil, nil, "BK", nil],
-        [nil, nil, nil, nil, nil, "B", nil, "B"],
-        [nil, nil, nil, nil, nil, nil, "B", nil],
-        [nil, nil, nil, nil, nil, nil, nil, "R"],
-        ["BK", nil, nil, nil, nil, nil, "B", nil],
-        [nil, nil, nil, nil, nil, "B", nil, "B"]]
-        })
-      }
-      it "team black wins" do
-        sign_in first_user
-        put :show, params: {id: third_game.id}
-
-        # expect(response).to render_template("show")
-        expect(response.status).to eq 200
-        expect(third_game.reload.winner).to eq "Team Black Wins!"
       end
     end
   end

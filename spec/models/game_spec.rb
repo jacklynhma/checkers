@@ -1,25 +1,82 @@
-require "spec_helper"
-feature "User sees the show page for games" do
 
-  scenario "starting a game" do
-    User.create(first_name: "Jackie", email: "j@mail.com", password: "apples")
-    Game.create(name: "poro122")
-    Gameplayer.create(team: "black", user_id: User.first.id, game_id: Game.first.id)
+require "rails_helper"
 
-    visit "/"
-    click_link("poro122")
-    fill_in 'Email', with: "j@mail.com"
-    fill_in 'Password', with: 'apples'
-    click_button "Log in"
-
-    expect(page).to have_content("Signed in successfully")
-  end
-end
 
 describe Game do
   it { should have_valid(:name).when("Test") }
-  it { should_not have_valid(:name).when(nil, "")}
+  it { should_not have_valid(:name).when(nil, "") }
 
   it { should have_many :gameplayers}
   it { should have_many :users}
+end
+
+describe "#winner" do
+  context "red has no more pieces" do
+    let (:game) do
+      Game.new({name: "testing", state_of_piece:
+        [[nil, nil, nil, nil, nil, nil, "BK", nil],
+        [nil, nil, nil, nil, nil, nil , nil, nil],
+        [nil, nil, nil, nil, nil, nil, "BK", nil],
+        [nil, nil, nil, nil, nil, "B", nil, "B"],
+        [nil, nil, nil, nil, nil, nil, "B", nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        ["BK", nil, nil, nil, nil, nil, "B", nil],
+        [nil, nil, nil, nil, nil, "B", nil, "B"]]
+        })
+    end
+    it "returns black team" do
+      expect(game.winner).to eq("Team Black Wins!")
+    end
+  end
+  context "black has no more pieces" do
+    let (:game) do
+      Game.new({name: "testing", state_of_piece:
+        [[nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil , nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, "R", nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil]]
+        })
+    end
+    it "returns black team" do
+      expect(game.winner).to eq("Team Red Wins!")
+    end
+  end
+  context "R can no longer move so Black wins " do
+    let (:game) do
+      Game.new({name: "testing", state_of_piece:
+      [[nil, nil, nil, nil, nil, nil, "BK", nil],
+      [nil, nil, nil, nil, nil, nil , nil, nil],
+      [nil, nil, nil, nil, nil, nil, "BK", nil],
+      [nil, nil, nil, nil, nil, "B", nil, "B"],
+      [nil, nil, nil, nil, nil, nil, "B", nil],
+      [nil, nil, nil, nil, nil, nil, nil, "R"],
+      ["BK", nil, nil, nil, nil, nil, "B", nil],
+      [nil, nil, nil, nil, nil, "B", nil, "B"]]
+      })
+    end
+    it "team black wins" do
+      expect(game.winner).to eq "Team Black Wins!"
+    end
+  end
+  context "B can no longer move so Red wins " do
+    let (:game) do
+      Game.new({name: "testing", state_of_piece:
+      [[nil, nil, nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil , nil, nil],
+      [nil, nil, nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil, "R", nil],
+      [nil, nil, nil, nil, nil, "R", nil, "R"],
+      [nil, nil, nil, nil, nil, nil, "B", nil],
+      [nil, nil, nil, nil, nil, "R", nil, "R"]]
+      })
+    end
+    it "team black wins" do
+      expect(game.winner).to eq "Team Red Wins!"
+    end
+  end
 end

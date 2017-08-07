@@ -11,7 +11,9 @@ describe('PieceTile', () =>{
       />
     )
   })
-  it('should render div tag', () => {
+
+  it('should render p tag', () => {
+
     expect(wrapper.find('p')).toBePresent()
     expect(wrapper.find('p').text()).toBe("R")
   })
