@@ -3,6 +3,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable and :omniauthable
   validates_presence_of :first_name
   has_many :gameplayers
+  has_many :comments
   has_many :games, through: :gameplayers
 
   def admin?

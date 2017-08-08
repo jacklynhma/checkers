@@ -15,7 +15,7 @@ class Api::V1::GamesController < ApplicationController
     array_of_teams = @game.team_players
 
     render json: {game: @game, team: team, winner: @game.winner,
-      redplayers: array_of_teams[1], blackplayers: array_of_teams[0],
+      redplayers: array_of_teams[1], current_user: current_user, blackplayers: array_of_teams[0],
     },
       adapter: :json
   end
