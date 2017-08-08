@@ -3,6 +3,7 @@ class Game < ApplicationRecord
   validates :state_of_piece, presence: true
 
   has_many :gameplayers
+  has_many :comments
   has_many :users, through: :gameplayers
   before_validation :setup_game, on: :create
 
