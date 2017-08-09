@@ -50,7 +50,6 @@ class GamesShowContainer extends Component {
     })
     .then(response => { return response.json()})
     .then(body => {
-
       this.setState({ gameid: body.game.id, board: body.game.state_of_piece,
         turn: body.game.turn,
         winner: body.winner, team: body.team, redplayers: body.redplayers,
@@ -79,38 +78,46 @@ class GamesShowContainer extends Component {
     })
     .then(response => response.json())
     .then(responseData => {
+
       this.setState({ piece: responseData.piece,
-        // possible: responseData.possible,
-        board: responseData.game.state_of_piece, message: responseData.message,
+        possible: responseData.possible,
+        board: responseData.game.state_of_piece,
+        message: responseData.message,
         turn: responseData.turn})
+          console.log(this.state.possible)
     })
     .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
 
   handleChange(rowNumber, columnNumber){
+
     let newcoordinates = this.state.coordinates.concat([rowNumber, columnNumber])
     this.setState({coordinates: newcoordinates})
   }
 
   componentDidUpdate () {
-
+    let formPayload = ""
     // if the coordinates is two it will grab another the same one and return the possible movesdispla
     // if the coordintes is four, it will check if it is valid
-    // if (this.state.coordinates.length == 2) {
-    //   let formPayload = {
-    //
-    //     coordinates: this.state.coordinates
-    //   }
-    //
-    //    this.setState({coordinates: []})
-    //   this.addAMove(formPayload)
-   if (this.state.coordinates.length == 4){
-      let formPayload = {
+    // if the coordinates is greater than 4, then it is invalid so it should be cleared
+    if (this.state.coordinates.length > 4) {
+      this.setState({coordinates: []})
+    }
+    else if (this.state.coordinates.length == 2) {
+        formPayload = {
         coordinates: this.state.coordinates
       }
-     //  need to clear the coordinates array
-     this.setState({coordinates: []})
-     this.addAMove(formPayload)
+      console.log (formPayload)
+       this.setState({coordinates: []})
+      this.addAMove(formPayload)
+    }
+    else if (this.state.coordinates.length == 4){
+      formPayload = {
+        coordinates: this.state.coordinates
+      }
+       //  need to clear the coordinates array
+       this.setState({coordinates: []})
+       this.addAMove(formPayload)
     }
   }
   render(){
