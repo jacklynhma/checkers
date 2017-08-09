@@ -49,8 +49,13 @@ class CommentsIndexContainer extends Component {
     })
     .then(response => response.json())
     .then(responseData => {
+      debugger
       let newcomments = this.state.comments.concat(responseData.comment)
-      this.setState({ comments: newcomments, currentuser: responseData.user, currentUserteam: responseData.team})
+      if (!this.state.arrayOfUsers.includes(responseData.user)) {
+        let newuser = this.state.arrayOfUsers.concat(responseData.user)
+        this.setState({ comments: newcomments, currentuser: responseData.user})
+      } else {this.setState({ comments: newcomments})
+      }
     })
     .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
@@ -77,8 +82,10 @@ class CommentsIndexContainer extends Component {
 //         })
   let post = ""
       let comments = this.state.comments.map((comment)=> {
+
         this.state.arrayOfUsers.map((user)=> {
           if ( user.id == comment.user_id){
+            debugger
             post = <div>{user.first_name}: {comment.body}</div>
           }
         })

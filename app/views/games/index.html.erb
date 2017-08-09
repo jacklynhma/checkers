@@ -1,27 +1,41 @@
 
-  <div class="games callout" >
+
+  <div class="gamescallout" >
     <h1> List of Games: </h1>
-    <div class="bordertable">
-      <div class="gamelist">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th style="width: 196px;"> #</th>
+          <th style="width: 300px;"> Game Name</th>
+          <th style="width: 300px;"> Links</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% number = 0 %>
         <% if !@games.nil? %>
           <% @games.each do |game| %>
-            <%= link_to game.name, "/games/#{game.id}" %>
+            <tr>
+              <td><%= number += 1 %></td>
+              <td><%= link_to game.name, "/games/#{game.id}" %></td>
 
-            <!-- if current user exists -->
-            <% if current_user %>
-              <% if current_user.playing?(game) %>
-                Joined!
-                <%= link_to("Resign", resign_game_path(game.id), method: "post") %>
+              <!-- if current user exists -->
+              <% if current_user %>
+                <% if current_user.playing?(game) %>
+                  <td>Joined! </td>
+
+                  <td><%= link_to("Resign", resign_game_path(game.id), method: "post") %></td>
+                <% else %>
+
+                  <td><%= link_to("Join", join_game_path(game.id), method: "post") %></td>
+                  <td></td>
+                <% end %>
               <% else %>
-                <%= link_to("Join", join_game_path(game.id), method: "post") %>
+              <td></td>
               <% end %>
-
-            <% end %>
-            <br>
+            </tr>
           <% end %>
         <% end %>
-      </div>
-    </div>
-    <br>
+      </tbody>
+    </table>
     <%= render 'form' %>
   </div>

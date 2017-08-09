@@ -23,9 +23,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
   describe "PUT#update" do
     it "update game with new move " do
       sign_in first_user
-
       put :update, params: {id: first_game.id, coordinates: [2, 1, 3, 2]}, as: :json
-
 
       expect(first_game.reload.state_of_piece[3][2]).to eq "B"
     end
@@ -93,6 +91,36 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
         ["R", nil, "R", nil, "R", nil, "R", nil]]
         })
       }
+      it "will return false" do
+        sign_in first_user
+        put :update, params: {id: third_game.id, coordinates: [5, 0, 4, 1]}, as: :json
+
+        expect(third_game.reload.state_of_piece[5][0]).to eq "R"
+        expect(third_game.reload.state_of_piece[4][1]).to eq nil
+      end
+    end
+      context "given the coordinates a piece must eat another piece" do
+        let!(:third_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: third_game.id )}
+        let!(:third_game) {Game.create({name: "testing", turn: 1, state_of_piece:
+
+          [[nil, nil, nil, nil, nil, nil, nil, nil],
+          ["B", nil, nil, nil, nil, nil , nil, nil],
+          [nil, "R", nil, nil, nil, nil, nil, nil],
+          ["B", nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil, "R"],
+          [nil, nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, "R", nil, "R"]]
+          })
+        }
+        it "will return trueß" do
+          sign_in first_user
+          put :update, params: {id: third_game.id, coordinates: [1, 0, 3, 2]}, as: :json
+
+          expect(third_game.reload.state_of_piece[1][0]).to eq nil
+          expect(third_game.reload.state_of_piece[3][2]).to eq "B"
+        end
+      end
       context "piece B should not be required to eat piece R" do
         let!(:second_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: second_game.id )}
         let!(:second_game) {Game.create({name: "testing", state_of_piece:
@@ -176,15 +204,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
           expect(second_game.reload.state_of_piece[5][6]).to eq nil
           expect(second_game.reload.state_of_piece[4][5]).to eq "R"
         end
-      end
-      it "nothing should happen" do
-        sign_in first_user
-        put :update, params: {id: third_game.id, coordinates: [4, 3, 3, 2]}, as: :json
 
-
-        expect(third_game.reload.state_of_piece[3][2]).to eq nil
-        expect(third_game.reload.state_of_piece[4][3]).to eq "R"
-      end
     end
     context "R piece should not be forced to eat B piece since space after jump is not nil" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}

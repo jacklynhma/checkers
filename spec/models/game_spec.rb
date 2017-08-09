@@ -260,6 +260,7 @@ describe "#piece_must_moved" do
       expect(game.piece_must_moved("black", [0, 1], [1, 2])).to eq true
     end
   end
+  
   context "given the coordinates a piece must eat another piece" do
     let (:game) do
       Game.new({name: "testing", state_of_piece:

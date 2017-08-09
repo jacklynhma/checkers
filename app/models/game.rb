@@ -256,6 +256,49 @@ class Game < ApplicationRecord
     return moves
   end
 
+  def calculate_possible_moves(piece, row_index, column_index)
+    moves = []
+    unless (row_index > 6 && piece == "B") || (row_index < 1 && piece == "R")
+      if (piece == "R" || piece == "RK" || piece == "BK") && column_index == 7
+        if (piece == "R" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index - 1][column_index  - 1] == nil
+          moves << [row_index - 1, column_index  - 1]
+        end
+      elsif (piece == "R" || piece == "RK" || piece == "BK") && column_index == 0
+        if (piece == "R" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index - 1][column_index  + 1] == nil
+          moves << [row_index - 1, column_index  + 1]
+        end
+      elsif (piece == "B" || piece == "RK" || piece == "BK" )&& column_index == 0
+        if (piece == "B" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index - 1][column_index  + 1] == nil
+          moves << [row_index - 1, column_index  + 1]
+        end
+      elsif (piece == "B" || piece == "RK" || piece == "BK" )&& column_index == 7
+        if (piece == "B" || piece == "RK" || piece == "BK") &&
+          state_of_piece[row_index - 1][column_index  - 1] == nil
+          moves << [row_index - 1, column_index  - 1]
+        end
+      end
+      if (piece == "R" || piece == "RK" || piece == "BK") &&
+        state_of_piece[row_index - 1][column_index  - 1] == nil
+        moves << [row_index - 1, column_index  - 1]
+      end
+      if (piece == "R" || piece == "RK" || piece == "BK") &&
+        state_of_piece[row_index - 1][column_index  + 1] == nil
+        moves << [row_index - 1, column_index  + 1]
+      end
+      if (piece == "B" || piece == "RK" || piece == "BK") &&
+        state_of_piece[row_index + 1][column_index  + 1] == nil
+        moves << [row_index + 1, column_index  + 1]
+      end
+      if (piece == "B" || piece == "RK" || piece == "BK") &&
+        state_of_piece[row_index + 1][column_index  - 1] == nil
+        moves << [row_index + 1, column_index  - 1]
+      end
+    end
+    return moves
+  end
   def possible_moves(piece, row_index, column_index)
     unless (row_index > 6 && piece == "B") || (row_index < 1 && piece == "R")
       if (piece == "R" || piece == "RK" || piece == "BK") && column_index == 7
