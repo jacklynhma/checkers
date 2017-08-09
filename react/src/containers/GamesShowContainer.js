@@ -3,6 +3,7 @@ import NavBar from '../components/NavBar';
 import PieceTile from '../components/PieceTile'
 import CommentsIndexContainer from './CommentsIndexContainer'
 
+
 class GamesShowContainer extends Component {
   constructor(props){
     super(props);
@@ -17,11 +18,28 @@ class GamesShowContainer extends Component {
       blackplayers: [],
       name: null,
       currentuser: null,
-      gameid: null
+      gameid: null,
+      history: [],
+      possible: [],
+      piece: null
     }
+    this.rewinded = this.rewinded.bind(this)
     this.addAMove = this.addAMove.bind(this)
     this.handleChange = this.handleChange.bind(this)
     setInterval(this.getGame.bind(this), 1000)
+  }
+
+  rewinded() {
+    this.state.board = [
+      [nil, "B", nil, "B", nil, "B", nil, "B"],
+      ["B", nil, "B", nil, "B", nil , "B", nil],
+      [nil, "B", nil, "B", nil, "B", nil, "B"],
+      [nil, nil, nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil, nil, nil],
+      ["R", nil, "R", nil, "R", nil, "R", nil],
+      [nil, "R", nil, "R", nil, "R", nil, "R"],
+      ["R", nil, "R", nil, "R", nil, "R", nil]
+    ]
   }
   componentDidMount(){
     this.getGame()
@@ -33,10 +51,11 @@ class GamesShowContainer extends Component {
     .then(response => { return response.json()})
     .then(body => {
 
-      this.setState({ gameid: body.game.id, board: body.game.state_of_piece, turn: body.game.turn,
+      this.setState({ gameid: body.game.id, board: body.game.state_of_piece,
+        turn: body.game.turn,
         winner: body.winner, team: body.team, redplayers: body.redplayers,
         blackplayers: body.blackplayers, name: body.game.name,
-        currentuser: body.current_user})
+        currentuser: body.currentuser, history: body.history})
     })
   }
 
@@ -60,7 +79,10 @@ class GamesShowContainer extends Component {
     })
     .then(response => response.json())
     .then(responseData => {
-      this.setState({ board: responseData.game.state_of_piece, message: responseData.message, turn: responseData.turn})
+      this.setState({ piece: responseData.piece,
+        // possible: responseData.possible,
+        board: responseData.game.state_of_piece, message: responseData.message,
+        turn: responseData.turn})
     })
     .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
@@ -71,8 +93,18 @@ class GamesShowContainer extends Component {
   }
 
   componentDidUpdate () {
-    if (this.state.coordinates.length == 4)
-     {
+
+    // if the coordinates is two it will grab another the same one and return the possible movesdispla
+    // if the coordintes is four, it will check if it is valid
+    // if (this.state.coordinates.length == 2) {
+    //   let formPayload = {
+    //
+    //     coordinates: this.state.coordinates
+    //   }
+    //
+    //    this.setState({coordinates: []})
+    //   this.addAMove(formPayload)
+   if (this.state.coordinates.length == 4){
       let formPayload = {
         coordinates: this.state.coordinates
       }
@@ -142,6 +174,7 @@ class GamesShowContainer extends Component {
                     rowNumber = {rowNumber}
                     handleChange = {this.handleChange}
                     piece = {piece}
+                    possible = {this.state.possible}
                   />
                 )
               })
@@ -149,47 +182,55 @@ class GamesShowContainer extends Component {
           </div>
         )
       })
-
+      let rewind= () => {rewinded}
       return (
-        <div className="row">
-          <div className="messages col-xs-8">
-            <h1>
-            {this.state.message != null &&
-              this.state.message
-            }
-            Title:
-            {this.state.name != null &&
-              this.state.name
-            }
-            </h1>
-            <div>
-              <h2>
-              {winner}
-              {turn}
-            </h2>
-            </div>
-            <div>
-              {board}
-              {team}
-              <div className="row">
-                <div className="col-xs-4">
-                  <h4>Red team:</h4>
-                  {redTeam}
-                </div>
-                <div className="col-xs-4ß">
-                  <h4>Black team:</h4>
-                  {blackTeam}
+        <div className="board">
+          <div className="display row">
+            <div className="messages col-xs-8">
+              <h1>
+              {this.state.message != null &&
+                this.state.message
+              }
+              Title:
+              {this.state.name != null &&
+                this.state.name
+              }
+              </h1>
+              <div>
+                <h2>
+                {winner}
+                {turn}
+              </h2>
+              </div>
+              <div className="playingboard">
+                {board}
+                {team}
+                <div className="row callout">
+                  <div className="col-xs-4">
+                    <h4>Red team:</h4>
+                    {redTeam}
+                  </div>
+                  <div className="col-xs-4">
+                    <h4>Black team:</h4>
+                    {blackTeam}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="col-xs-4">
-            {this.state.gameid != null &&
-            <CommentsIndexContainer
-              key={this.state.gameid}
-              gameid={this.state.gameid}
-              />
-            }
+            <div className="col-xs-4">
+              <div className="chat vertical-center">
+                {this.state.gameid != null &&
+                <CommentsIndexContainer
+                  key={this.state.gameid}
+                  gameid={this.state.gameid}
+                  />
+                }
+              </div>
+              <div >
+                <button onClick={rewind}>Replay</button>
+
+              </div>
+            </div>
           </div>
         </div>
       )
