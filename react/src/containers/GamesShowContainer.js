@@ -146,7 +146,7 @@ class GamesShowContainer extends Component {
       if (this.state.team == "none"){
         team = <h3>You are a spectator</h3>
       } else if (this.state.team != "none"){
-        team = <h3> You are on team {this.state.team}</h3>
+        team = <h3> </h3>
       }
       let blackTeam = ""
       let displayblackplayer = ""
