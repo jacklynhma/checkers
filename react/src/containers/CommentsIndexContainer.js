@@ -23,6 +23,7 @@ class CommentsIndexContainer extends Component {
     })
     .then(response => { return response.json()})
     .then(body => {
+      
       this.setState({  game: body.game, comments: body.comments,
         arrayOfUsers: body.users, currentuser: body.user,
         redteamMembers: body.redteamMembers, blackteamMembers: body.blackteamMembers})
@@ -49,7 +50,7 @@ class CommentsIndexContainer extends Component {
     })
     .then(response => response.json())
     .then(responseData => {
-      debugger
+
       let newcomments = this.state.comments.concat(responseData.comment)
       if (!this.state.arrayOfUsers.includes(responseData.user)) {
         let newuser = this.state.arrayOfUsers.concat(responseData.user)
@@ -85,7 +86,7 @@ class CommentsIndexContainer extends Component {
 
         this.state.arrayOfUsers.map((user)=> {
           if ( user.id == comment.user_id){
-            debugger
+
             post = <div>{user.first_name}: {comment.body}</div>
           }
         })
