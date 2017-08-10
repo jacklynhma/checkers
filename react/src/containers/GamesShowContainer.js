@@ -84,7 +84,6 @@ class GamesShowContainer extends Component {
         board: responseData.game.state_of_piece,
         message: responseData.message,
         turn: responseData.turn})
-          console.log(this.state.possible)
     })
     .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
@@ -107,8 +106,6 @@ class GamesShowContainer extends Component {
         formPayload = {
         coordinates: this.state.coordinates
       }
-      console.log (formPayload)
-       this.setState({coordinates: []})
       this.addAMove(formPayload)
     }
     else if (this.state.coordinates.length == 4){
