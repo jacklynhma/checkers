@@ -26,14 +26,15 @@ const PieceTile = (props) => {
 
   let tileColor = colors[colorIndex] + " square"
 
+  if (props.possible !== null) {
+    if (props.possible.length > 0){
+      props.possible.forEach((tile) => {
+        if (tile[0] === props.rowNumber && tile[1] === props.columnNumber){
+          tileColor = "possiblechoices" + " square"
+        }
+      })
+    }
 
-  if (props.possible.length > 0){
-    debugger
-    props.possible.forEach((tile) => {
-      if (tile[0] === props.rowNumber && tile[1] === props.columnNumber){
-        tileColor = "possiblechoices" + " square"
-      }
-    })
   }
   return (
     <div key={`${props.rowNumber},${props.columnNumber}`} className={tileColor} onClick={squareclicked}>

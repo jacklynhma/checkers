@@ -166,7 +166,7 @@ nav.navbar {
 
   height: 380px;
   padding-top: 30px;
-  margin-left: 290px;
+  margin: 0px;
 }
 .messages {
   text-align: center;
