@@ -1,8 +1,3 @@
-body {
-  /*background-image: url("https://c1.staticflickr.com/3/2560/4222827895_78e267d832_b.jpg");*/
-  /*background-repeat: no-repeat;
-  background-size: cover;*/
-}
 
 .vertical-center {
   min-height: 30vh; /* These two lines are counted as one :-)       */
@@ -32,6 +27,8 @@ div.gamescallout {
   justify-content: center;
   background-color: #FFFFFF;
   opacity: .9;
+  width: 1060px;
+  font-size: 25px;
 
 }
 

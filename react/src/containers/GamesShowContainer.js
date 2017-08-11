@@ -27,7 +27,7 @@ class GamesShowContainer extends Component {
     this.startreplay = this.startreplay.bind(this)
     this.addAMove = this.addAMove.bind(this)
     this.handleChange = this.handleChange.bind(this)
-    // setInterval(this.getGame.bind(this), 1000)
+    setInterval(this.getGame.bind(this), 1000)
     this.stepReplay = this.stepReplay.bind(this)
   }
 
@@ -100,22 +100,28 @@ class GamesShowContainer extends Component {
   }
 
   handleChange(rowNumber, columnNumber){
-    
+
     let teamTurn = this.state.turn % 2
-    if ((teamTurn == 1 && this.state.team == "black") || (teamTurn == 0 && this.state.team == "red")){
-      this.state.coordinates = this.state.coordinates.concat([rowNumber, columnNumber])
+    if ((teamTurn == 1 && this.state.team == "black" ) || (teamTurn == 0 && this.state.team == "red")){
+      let coordinate = [rowNumber, columnNumber]
+      let piece = this.state.board[coordinate[0]][coordinate[1]]
       let formPayload = ""
+
       // if the coordinates is two it will grab another the same one and return the possible movesdispla
       // if the coordintes is four, it will check if it is valid
       // if the coordinates is greater than 4, then it is invalid so it should be cleared
-      if (this.state.coordinates.length == 2) {
+      if ((coordinate.length == 2 && (piece !== null )) && (this.state.team == "red" && (piece === "R" || piece === "RK")) || (this.state.team == "black" && (piece === "B" || piece === "BK"))) {
+
+        this.state.coordinates = coordinate
         formPayload = {
         coordinates: this.state.coordinates
         }
         this.addAMove(formPayload)
+
       }
-      else if (this.state.coordinates.length >= 4){
-        // debugger
+      else if (coordinate.length == 2 && piece === null && this.state.coordinates.length == 2){
+
+        this.state.coordinates = this.state.coordinates.concat(coordinate)
         formPayload = {
           coordinates: this.state.coordinates
         }
@@ -123,11 +129,12 @@ class GamesShowContainer extends Component {
         this.setState({coordinates: []})
         this.addAMove(formPayload)
       }
+
+
     }
   }
 
   render(){
-// debugger
 
     let winner = "";
       if (this.state.winner == "no one"){
@@ -201,14 +208,15 @@ class GamesShowContainer extends Component {
         <div className="board">
           <div className="display row">
             <div className="messages col-xs-8">
+              <h2>
+                {this.state.message != null &&
+                  this.state.message
+                }
+              </h2>
               <h1>
-              {this.state.message != null &&
-                this.state.message
-              }
-              Title:
-              {this.state.name != null &&
-                this.state.name
-              }
+                {this.state.name != null &&
+                  this.state.name
+                }
               </h1>
               <div>
                 <h2>

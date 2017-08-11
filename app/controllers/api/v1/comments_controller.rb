@@ -14,6 +14,7 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   def create
+
     @game = Game.find(params[:game_id])
     @comment = @game.comments.new(comment_params)
 

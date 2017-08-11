@@ -1,5 +1,5 @@
 class Game < ApplicationRecord
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: true
   validates :state_of_piece, presence: true
 
   has_many :gameplayers
