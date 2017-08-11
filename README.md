@@ -4,26 +4,41 @@
 
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Team Checkers
+========================
 
-Things you may want to cover:
+Contributors:
+- Jacklyn Ma
+Link to app: http://team-checkers.herokuapp.com/
 
-* Ruby version
+Description:
 
-* System dependencies
+Team Checkers is a react on rails app, that allows users to create teams and play checkers. When a user enters a site, they will see a list of games and they have the option of being a spectator or joining a game. After the user has joined a game, a team will automatically be assigned to them
 
-* Configuration
+There is logic in the backend that checks if the user is making any illegal moves, has any required moves, and if they have won.
 
-* Database creation
+Users can click on a piece and the board will highlight any possible moves for that certain piece
 
-* Database initialization
+After the game is over, if the players wish to review the game, there is a replay button below the chat forum
 
-* How to run the test suite
+Technologies:
+====
+- Backend Rails 5.1.2
+- Frontend: React.js, CSS, Bootstrap
+- User Auth: Devise
+- Database: Postgres
+- Testing: RSpec, Capybara, Jasmine, Karma, Enzyme
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-#checkers
+Setup
+======
+git clone https://github.com/jacklynhma/checkers.git
+``
+bundle install
+npm install
+rake db:migrate
+rails s
+``
+In another window, run:
+`````
+npm start
+```
