@@ -23,7 +23,7 @@ class CommentsIndexContainer extends Component {
     })
     .then(response => { return response.json()})
     .then(body => {
-      
+
       this.setState({  game: body.game, comments: body.comments,
         arrayOfUsers: body.users, currentuser: body.user,
         redteamMembers: body.redteamMembers, blackteamMembers: body.blackteamMembers})

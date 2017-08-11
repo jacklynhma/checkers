@@ -29,8 +29,15 @@ const PieceTile = (props) => {
   if (props.possible !== null) {
     if (props.possible.length > 0){
       props.possible.forEach((tile) => {
-        if (tile[0] === props.rowNumber && tile[1] === props.columnNumber){
-          tileColor = "possiblechoices" + " square"
+        if (tile.length == 4) {
+          if (tile[2] === props.rowNumber && tile[3] === props.columnNumber){
+            tileColor = "possiblechoices" + " square"
+          }
+        } else {
+          if (tile[0] === props.rowNumber && tile[1] === props.columnNumber){
+            tileColor = "possiblechoices" + " square"
+          }
+
         }
       })
     }

@@ -45,15 +45,19 @@
 
     <% if notice %>
       <div data-alert class="alert-box info radius">
-        <%= notice %><%= link_to "X", '#', :class => 'close' %>
+        <%= notice %>
+        <!-- <%= link_to "X", '#', :class => 'close' %> -->
+        <%= yield %>
       </div>
+    <% else %>
+      <%= yield %>
     <% end %>
 
 
 
 
 
-    <%= yield %>
+
     </div>
   </body>
 </html>

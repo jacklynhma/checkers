@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  validates_presence_of :first_name
+  validates_presence_of :first_name, uniqueness: true
   has_many :gameplayers
   has_many :comments
   has_many :games, through: :gameplayers
