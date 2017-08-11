@@ -7,9 +7,7 @@
 Team Checkers
 ========================
 
-Contributors:
-- Jacklyn Ma
-Link to app: http://team-checkers.herokuapp.com/
+http://team-checkers.herokuapp.com/
 
 Description:
 =====
@@ -40,7 +38,8 @@ npm install
 rake db:migrate
 rails s
 
+```
 In another window, run:
 
-``
+```
 npm start
