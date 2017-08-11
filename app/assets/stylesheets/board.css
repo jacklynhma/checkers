@@ -1,4 +1,10 @@
+a {
+  font-family: 'Oxygen', sans-serif;
+}
 
+body {
+  font-family: 'Open Sans', sans-serif;
+}
 .vertical-center {
   min-height: 30vh; /* These two lines are counted as one :-)       */
   padding-top: 200px;
@@ -21,6 +27,7 @@ div.choices {
   background-color: black;
 }
 div.gamescallout {
+  font-family: 'Oxygen', sans-serif;
   border-top: 10px;
   padding-top: 30px;
   padding: 60px;
@@ -29,7 +36,6 @@ div.gamescallout {
   opacity: .9;
   width: 1060px;
   font-size: 25px;
-
 }
 
 div.possiblechoices {
