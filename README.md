@@ -12,6 +12,7 @@ Contributors:
 Link to app: http://team-checkers.herokuapp.com/
 
 Description:
+=====
 
 Team Checkers is a react on rails app, that allows users to create teams and play checkers. When a user enters a site, they will see a list of games and they have the option of being a spectator or joining a game. After the user has joined a game, a team will automatically be assigned to them
 
@@ -32,13 +33,14 @@ Technologies:
 Setup
 ======
 git clone https://github.com/jacklynhma/checkers.git
-``
+
+```
 bundle install
 npm install
 rake db:migrate
 rails s
-``
+
 In another window, run:
-`````
+
+``
 npm start
-```
