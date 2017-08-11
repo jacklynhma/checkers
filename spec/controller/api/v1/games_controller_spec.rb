@@ -37,7 +37,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "must eat a piece" do
       let!(:second_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: second_game.id )}
-      let!(:second_game) {Game.create({name: "testing", state_of_piece:
+      let!(:second_game) {Game.create({name: "testing1", state_of_piece:
         [[nil, "B", nil, "B", nil, "B", nil, "B"],
         ["B", nil, "B", nil, "B", nil , "B", nil],
         [nil, nil, nil, "B", nil, "B", nil, "B"],
@@ -50,6 +50,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
       }
       it "should fail to update" do
         sign_in first_user
+
         put :update, params: {id: second_game.id, coordinates: [3, 2, 4, 1]}, as: :json
 
         expect(second_game.reload.state_of_piece[4][1]).to eq nil
@@ -58,7 +59,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "must eat a piece" do
       let!(:third_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", state_of_piece:
+      let!(:third_game) {Game.create({name: "testing2", state_of_piece:
         [[nil, "B", nil, "B", nil, "B", nil, "B"],
         ["B", nil, "B", nil, "B", nil , "B", nil],
         [nil, nil, nil, "B", nil, "B", nil, "B"],
@@ -80,7 +81,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "R should not be allowed to move because it is not his turn" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 1, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing3", turn: 1, state_of_piece:
         [[nil, "B", nil, "B", nil, "B", nil, "B"],
         ["B", nil, "B", nil, "B", nil , "B", nil],
         [nil, "B", nil, nil, nil, "B", nil, nil],
@@ -101,7 +102,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
       context "given the coordinates a piece must eat another piece" do
         let!(:third_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: third_game.id )}
-        let!(:third_game) {Game.create({name: "testing", turn: 1, state_of_piece:
+        let!(:third_game) {Game.create({name: "testing4", turn: 1, state_of_piece:
 
           [[nil, nil, nil, nil, nil, nil, nil, nil],
           ["B", nil, nil, nil, nil, nil , nil, nil],
@@ -123,7 +124,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
       end
       context "piece B should not be required to eat piece R" do
         let!(:second_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: second_game.id )}
-        let!(:second_game) {Game.create({name: "testing", state_of_piece:
+        let!(:second_game) {Game.create({name: "testing6", state_of_piece:
           [[nil, "B", nil, "B", nil, "B", nil, "B"],
           ["B", nil, "B", nil, "B", nil , "B", nil],
           [nil, nil, nil, "B", nil, "B", nil, "R"],
@@ -144,7 +145,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
       end
       context "piece B should not be required to eat piece R" do
         let!(:second_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: second_game.id )}
-        let!(:second_game) {Game.create({name: "testing", state_of_piece:
+        let!(:second_game) {Game.create({name: "testing7", state_of_piece:
           [[nil, "B", nil, "B", nil, "B", nil, "B"],
           ["B", nil, "B", nil, "B", nil , "B", nil],
           [nil, nil, nil, "B", nil, "B", nil, "R"],
@@ -165,7 +166,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
       end
       context "piece R should not be required to eat piece B" do
         let!(:second_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: second_game.id )}
-        let!(:second_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+        let!(:second_game) {Game.create({name: "testing8", turn: 2, state_of_piece:
           [[nil, "B", nil, "B", nil, "B", nil, "B"],
           ["B", nil, "B", nil, "B", nil , "B", nil],
           [nil, nil, nil, "B", nil, "B", nil, nil],
@@ -186,7 +187,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
       end
       context "piece R should not be required to eat piece B" do
         let!(:second_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: second_game.id )}
-        let!(:second_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+        let!(:second_game) {Game.create({name: "testing9", turn: 2, state_of_piece:
           [[nil, "B", nil, "B", nil, "B", nil, "B"],
           ["B", nil, "B", nil, "B", nil , "B", nil],
           [nil, nil, nil, "B", nil, "B", nil, nil],
@@ -208,7 +209,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "R piece should not be forced to eat B piece since space after jump is not nil" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing10", turn: 2, state_of_piece:
         [[nil, "B", nil, "B", nil, "B", nil, "B"],
         ["B", nil, "B", nil, "B", nil , "B", nil],
         [nil, "B", nil, nil, nil, "B", nil, nil],
@@ -231,7 +232,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
 
     context "B piece should not be forced to eat B piece since space after jump is off the board" do
       let!(:third_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 1, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing11", turn: 1, state_of_piece:
         [[nil, "B", nil, "B", nil, "B", nil, "B"],
         ["B", nil, "B", nil, "B", nil , "B", nil],
         [nil, "B", nil, nil, nil, "B", nil, nil],
@@ -254,7 +255,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
 
     context "R piece can jump twice if there is an opposing piece next to it and there is an empty space" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing12", turn: 2, state_of_piece:
         [[nil, "B", nil, nil, nil, "B", nil, "B"],
         ["B", nil, "B", nil, "B", nil , "B", nil],
         [nil, nil, nil, nil, nil, "B", nil, nil],
@@ -281,7 +282,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     context "R should become RK" do
 
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing13", turn: 2, state_of_piece:
 
         [[nil, "B", nil, nil, nil, "B", nil, "B"],
         ["B", nil, "B", nil, "B", nil , "B", nil],
@@ -302,7 +303,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "when a piece reaches the opposing side, they will turn into a BK" do
       let!(:third_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 1, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing14", turn: 1, state_of_piece:
         [[nil, "B", nil, nil, nil, nil, nil, "B"],
         [nil, nil, "B", nil, "R", nil , nil, nil],
         [nil, "B", nil, nil, nil, nil, nil, "B"],
@@ -324,7 +325,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "when B tries to step on R, it will not be a valid move" do
       let!(:third_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 1, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing123", turn: 1, state_of_piece:
         [[nil, "B", nil, nil, nil, nil, nil, "B"],
         [nil, nil, "B", nil, "R", nil , nil, nil],
         [nil, "B", nil, nil, nil, nil, nil, "B"],
@@ -346,7 +347,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "when R tries to step on B, it will not be a valid move" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing124", turn: 2, state_of_piece:
         [[nil, "B", nil, nil, nil, nil, nil, "B"],
         [nil, nil, "B", nil, "R", nil , nil, nil],
         [nil, nil, nil, nil, nil, nil, nil, "B"],
@@ -368,7 +369,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "when B tries to step on R, it will not be a valid move" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 1, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing125", turn: 1, state_of_piece:
         [[nil, "B", nil, nil, nil, nil, nil, "B"],
         [nil, nil, "B", nil, "R", nil , nil, nil],
         [nil, nil, nil, nil, nil, nil, nil, "B"],
@@ -390,7 +391,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "When r moves next to B, their turn should end" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing126", turn: 2, state_of_piece:
         [[nil, "B", nil, nil, nil, nil, nil, "B"],
         [nil, nil, "B", nil, "R", nil , nil, nil],
         [nil, nil, nil, nil, nil, nil, nil, "B"],
@@ -413,7 +414,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "When r moves next to B, their turn should end" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing127", turn: 2, state_of_piece:
         [[nil, "B", nil, "B", nil, "B", nil, "B"],
         ["B", nil, "B", nil, "B", nil , "B", nil],
         [nil, nil, nil, "B", nil, "B", nil, "B"],
@@ -436,7 +437,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "When B moves next to R, their turn should end" do
       let!(:third_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 1, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing213", turn: 1, state_of_piece:
         [[nil, "B", nil, nil, nil, nil, nil, "B"],
         [nil, nil, "B", nil, "R", nil , nil, nil],
         [nil, nil, nil, nil, nil, nil, nil, "B"],
@@ -459,7 +460,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "when a piece reaches the opposing side, they will turn into a RK, which allows them to move backwards " do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing214", turn: 2, state_of_piece:
         [[nil, "B", nil, "RK", nil, "B", nil, "B"],
         [nil, nil, "B", nil, nil, nil , nil, nil],
         [nil, "B", nil, nil, nil, nil, nil, "B"],
@@ -481,7 +482,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "Since RK can move backwards it should be allowed to jump the opposing piece" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", turn: 2, state_of_piece:
+      let!(:third_game) {Game.create({name: "testing215", turn: 2, state_of_piece:
         [[nil, "B", nil, "RK", nil, "B", nil, "B"],
         [nil, nil, "B", nil, nil, nil , nil, nil],
         [nil, nil, nil, nil, nil, nil, nil, "B"],
@@ -503,7 +504,7 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
     context "team_misisng_piece should return team black" do
       let!(:third_match) { Gameplayer.create(team: "red", user_id: first_user.id, game_id: third_game.id )}
-      let!(:third_game) {Game.create({name: "testing", state_of_piece:
+      let!(:third_game) {Game.create({name: "testing216", state_of_piece:
         [[nil, nil, nil, nil, nil, nil, "BK", nil],
         [nil, nil, nil, nil, nil, nil , nil, nil],
         [nil, nil, nil, nil, nil, nil, "BK", nil],

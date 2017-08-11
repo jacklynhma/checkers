@@ -46,10 +46,10 @@ class GamesController < ApplicationController
     end
   end
 
-  def edit
-    @game = Game.find(params[:id])
-    render action: "edit"
-  end
+# def edit
+#   @game = Game.find(params[:id])
+#   render action: "edit"
+# end
 
 
   # returns the row
