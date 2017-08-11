@@ -6,15 +6,21 @@ class Api::V1::GamesController < ApplicationController
     render json: Game.all, adapter: :json
   end
 
-  def show
+  def history
+    @game = Game.find(params[:id])
+    turn = params[:turn]
+    @game.set_board(turn)
+    render json: {game: @game}
+  end
 
+  def show
     @game = Game.find(params[:id])
     team = "none"
     if current_user && current_user.playing?(@game)
       team = current_user.gameplayers.find_by(game_id: @game.id).team
     end
     array_of_teams = @game.team_players
-    @game.history_of_pieces = @game.history_of_pieces.reverse
+
 
     render json: {game: @game, team: team, winner: @game.winner, history: @game.history_of_pieces,
       redplayers: array_of_teams[1], currentuser: current_user, blackplayers: array_of_teams[0]
@@ -23,6 +29,7 @@ class Api::V1::GamesController < ApplicationController
   end
 
   def update
+# binding.pry
     @game = Game.find(params[:id])
     # make sure a piece deletes from a board before you put a piece on the board
     message = ""
@@ -31,8 +38,12 @@ class Api::V1::GamesController < ApplicationController
       to_coordinate = [params[:coordinates][2], params[:coordinates][3]]
     end
 
+    # if the current game is not reset and
+
+
     team = current_user.defining_team(@game)
     piece = @game.state_of_piece[from_coordinate[0]][from_coordinate[1]]
+
     if params[:coordinates].length == 2 && @game.required_moves(team,
       from_coordinate) != []
       poss_mon = @game.required_moves(team, from_coordinate)
@@ -41,8 +52,8 @@ class Api::V1::GamesController < ApplicationController
     elsif @game.error_message(team, piece, from_coordinate, to_coordinate)
       message = @game.error_message(team, piece, from_coordinate, to_coordinate)
     else
-      @game.steps_to_do_if_no_error_messages(from_coordinate, to_coordinate, piece, team)
-      @game.save
+      @game.move_piece(from_coordinate, to_coordinate, piece)
+      @game.update_turn(from_coordinate, to_coordinate, team)
     end
     render json: {piece: piece, game: @game, message: message, turn: @game.turn,
       winner: @game.winner, team: team,

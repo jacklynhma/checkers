@@ -10,6 +10,68 @@ describe Game do
   it { should have_many :users}
 end
 
+describe "#set_board" do
+  context "a set of history of pieces was given. a player clicks the replay button" do
+    let (:game) do
+      Game.new({name: "bear",
+         state_of_piece:
+          [[nil, "B", nil, "B", nil, "B", nil, "B"],
+           ["B", nil, "B", nil, nil, nil, "B", nil],
+           [nil, nil, nil, "B", nil, "B", nil, nil],
+           [nil, nil, nil, nil, nil, nil, "B", nil],
+           [nil, nil, nil, nil, nil, nil, nil, nil],
+           ["R", nil, nil, nil, "R", nil, "R", nil],
+           [nil, "B", nil, nil, nil, "R", nil, "R"],
+           ["R", nil, "R", nil, "R", nil, "R", nil]],
+         history_of_pieces:
+          [[2, 3, 3, 4],
+           [5, 2, 4, 3],
+           [3, 4, 5, 2],
+           [6, 1, 4, 3],
+           [2, 7, 3, 6],
+           [6, 3, 5, 2],
+           [1, 4, 2, 3],
+           [4, 3, 3, 2],
+           [2, 1, 4, 3],
+           [4, 3, 6, 1]],
+         turn: 10
+      })
+    end
+    it "looks like turn 0" do
+      expect(game.set_board(0)).to eq [
+    [nil, "B", nil, "B", nil, "B", nil, "B"],
+   ["B", nil, "B", nil, "B", nil, "B", nil],
+   [nil, "B", nil, "B", nil, "B", nil, "B"],
+   [nil, nil, nil, nil, nil, nil, nil, nil],
+   [nil, nil, nil, nil, nil, nil, nil, nil],
+   ["R", nil, "R", nil, "R", nil, "R", nil],
+   [nil, "R", nil, "R", nil, "R", nil, "R"],
+   ["R", nil, "R", nil, "R", nil, "R", nil]]
+    end
+    it "looks like turn 1" do
+      expect(game.set_board(1)).to eq [
+   [nil, "B", nil, "B", nil, "B", nil, "B"],
+   ["B", nil, "B", nil, "B", nil, "B", nil],
+   [nil, "B", nil, nil, nil, "B", nil, "B"],
+   [nil, nil, nil, nil, "B", nil, nil, nil],
+   [nil, nil, nil, nil, nil, nil, nil, nil],
+   ["R", nil, "R", nil, "R", nil, "R", nil],
+   [nil, "R", nil, "R", nil, "R", nil, "R"],
+   ["R", nil, "R", nil, "R", nil, "R", nil]]
+    end
+    it "looks like turn 9" do
+      expect(game.set_board(10)).to eq [
+    [nil, "B", nil, "B", nil, "B", nil, "B"],
+   ["B", nil, "B", nil, nil, nil, "B", nil],
+   [nil, nil, nil, "B", nil, "B", nil, nil],
+   [nil, nil, nil, nil, nil, nil, "B", nil],
+   [nil, nil, nil, nil, nil, nil, nil, nil],
+   ["R", nil, nil, nil, "R", nil, "R", nil],
+   [nil, "B", nil, nil, nil, "R", nil, "R"],
+   ["R", nil, "R", nil, "R", nil, "R", nil]]
+    end
+  end
+end
 describe "#winner" do
   context "red has no more pieces" do
     let (:game) do
@@ -260,7 +322,7 @@ describe "#piece_must_moved" do
       expect(game.piece_must_moved("black", [0, 1], [1, 2])).to eq true
     end
   end
-  
+
   context "given the coordinates a piece must eat another piece" do
     let (:game) do
       Game.new({name: "testing", state_of_piece:
