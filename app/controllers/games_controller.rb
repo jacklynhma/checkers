@@ -22,7 +22,7 @@ class GamesController < ApplicationController
     elsif @game.gameplayers.where(team: "black").count == @game.gameplayers.where(team: "red").count
       @game.gameplayers.create(user: current_user, team: "black")
     end
-    redirect_to @game
+    redirect_to "/games/#{@game.id}"
   end
 
   def resign
@@ -46,10 +46,10 @@ class GamesController < ApplicationController
     end
   end
 
-# def edit
-#   @game = Game.find(params[:id])
-#   render action: "edit"
-# end
+def edit
+  @game = Game.find(params[:id])
+  render action: "edit"
+end
 
 
   # returns the row

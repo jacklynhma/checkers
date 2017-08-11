@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :games, only: [:index, :create, :new] do
+  resources :games, only: [:index, :create, :edit, :new] do
     member do
       post :join
       post :resign
