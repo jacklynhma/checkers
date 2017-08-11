@@ -21,30 +21,42 @@ class GamesShowContainer extends Component {
       gameid: null,
       history: [],
       possible: [],
-      piece: null
+      replayStep: 0,
+      watchingReplay: false
     }
-    this.rewinded = this.rewinded.bind(this)
+    this.startreplay = this.startreplay.bind(this)
     this.addAMove = this.addAMove.bind(this)
     this.handleChange = this.handleChange.bind(this)
-    setInterval(this.getGame.bind(this), 1000)
+    // setInterval(this.getGame.bind(this), 1000)
+    this.stepReplay = this.stepReplay.bind(this)
   }
 
-  rewinded() {
-    this.state.board = [
-      [nil, "B", nil, "B", nil, "B", nil, "B"],
-      ["B", nil, "B", nil, "B", nil , "B", nil],
-      [nil, "B", nil, "B", nil, "B", nil, "B"],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      ["R", nil, "R", nil, "R", nil, "R", nil],
-      [nil, "R", nil, "R", nil, "R", nil, "R"],
-      ["R", nil, "R", nil, "R", nil, "R", nil]
-    ]
+  startreplay() {
+    this.setState({replayStep: 0, watchingReplay: true}, this.stepReplay)
   }
+
+  stepReplay() {
+    fetch(`/api/v1/games/${this.props.params.id}/history?turn=${this.state.replayStep}`)
+    .then(response => { return response.json()})
+    .then(body => {
+      this.setState({board: body.game.state_of_piece, replayStep: this.state.replayStep + 1})
+      if (this.state.replayStep <= this.state.history.length) {
+        setTimeout(this.stepReplay, 1000)
+      } else {
+        this.setState({watchingReplay: false})
+      }
+
+    })
+  }
+
+
   componentDidMount(){
     this.getGame()
   }
   getGame() {
+    if (this.state.watchingReplay ){
+      return
+    }
     fetch(`/api/v1/games/${this.props.params.id}`, {
       credentials: "same-origin"
     })
@@ -68,17 +80,16 @@ class GamesShowContainer extends Component {
     body: JSON.stringify(formPayload)
     })
     .then(response => {
-    if (response.ok) {
-      return response;
-  } else {
-      let errorMessage = `${response.status} (${response.statusText})`;
-      let error = new Error(errorMessage);
-      throw(error);
-    }
+      if (response.ok) {
+        return response;
+      } else {
+        let errorMessage = `${response.status} (${response.statusText})`;
+        let error = new Error(errorMessage);
+        throw(error);
+      }
     })
     .then(response => response.json())
     .then(responseData => {
-
       this.setState({ piece: responseData.piece,
         possible: responseData.possible,
         board: responseData.game.state_of_piece,
@@ -89,35 +100,34 @@ class GamesShowContainer extends Component {
   }
 
   handleChange(rowNumber, columnNumber){
-
-    let newcoordinates = this.state.coordinates.concat([rowNumber, columnNumber])
-    this.setState({coordinates: newcoordinates})
-  }
-
-  componentDidUpdate () {
-    let formPayload = ""
-    // if the coordinates is two it will grab another the same one and return the possible movesdispla
-    // if the coordintes is four, it will check if it is valid
-    // if the coordinates is greater than 4, then it is invalid so it should be cleared
-    if (this.state.coordinates.length > 4) {
-      this.setState({coordinates: []})
-    }
-    else if (this.state.coordinates.length == 2) {
+    
+    let teamTurn = this.state.turn % 2
+    if ((teamTurn == 1 && this.state.team == "black") || (teamTurn == 0 && this.state.team == "red")){
+      this.state.coordinates = this.state.coordinates.concat([rowNumber, columnNumber])
+      let formPayload = ""
+      // if the coordinates is two it will grab another the same one and return the possible movesdispla
+      // if the coordintes is four, it will check if it is valid
+      // if the coordinates is greater than 4, then it is invalid so it should be cleared
+      if (this.state.coordinates.length == 2) {
         formPayload = {
         coordinates: this.state.coordinates
+        }
+        this.addAMove(formPayload)
       }
-      this.addAMove(formPayload)
-    }
-    else if (this.state.coordinates.length == 4){
-      formPayload = {
-        coordinates: this.state.coordinates
+      else if (this.state.coordinates.length >= 4){
+        // debugger
+        formPayload = {
+          coordinates: this.state.coordinates
+        }
+        //  need to clear the coordinates array
+        this.setState({coordinates: []})
+        this.addAMove(formPayload)
       }
-       //  need to clear the coordinates array
-       this.setState({coordinates: []})
-       this.addAMove(formPayload)
     }
   }
+
   render(){
+// debugger
 
     let winner = "";
       if (this.state.winner == "no one"){
@@ -186,7 +196,7 @@ class GamesShowContainer extends Component {
           </div>
         )
       })
-      let rewind= () => {rewinded}
+
       return (
         <div className="board">
           <div className="display row">
@@ -231,8 +241,7 @@ class GamesShowContainer extends Component {
                 }
               </div>
               <div >
-                <button onClick={rewind}>Replay</button>
-
+                <button onClick={this.startreplay}>Replay</button>
               </div>
             </div>
           </div>

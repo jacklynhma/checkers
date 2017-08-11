@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :games, only: [:show, :update, :edit] do
+        member do
+          get :history
+        end
         resources :comments, only: [:index, :create]
       end
     end

@@ -14,9 +14,8 @@ class Game < ApplicationRecord
     user_ids.include?(user.id)
   end
 
-
-  def setup_game
-    self.state_of_piece = [
+  def starting_board
+    [
     [nil, "B", nil, "B", nil, "B", nil, "B"],
     ["B", nil, "B", nil, "B", nil , "B", nil],
     [nil, "B", nil, "B", nil, "B", nil, "B"],
@@ -25,7 +24,13 @@ class Game < ApplicationRecord
     ["R", nil, "R", nil, "R", nil, "R", nil],
     [nil, "R", nil, "R", nil, "R", nil, "R"],
     ["R", nil, "R", nil, "R", nil, "R", nil]
-  ] if state_of_piece.nil? || state_of_piece === ""
+  ]
+  end
+
+
+  def setup_game
+    self.state_of_piece = starting_board if state_of_piece.nil? ||
+      state_of_piece === ""
     # default to empty array
     self.history_of_pieces ||= []
   end
@@ -89,6 +94,21 @@ class Game < ApplicationRecord
      return array_of_teams
   end
 
+  def set_board(turn)
+    i = 0
+    self.state_of_piece = starting_board
+    while i < turn.to_i
+      coordinates = self.history_of_pieces[i]
+      from_coordinate = [coordinates[0], coordinates[1]]
+      to_coordinate = [coordinates[2], coordinates[3]]
+      piece = self.state_of_piece[from_coordinate[0]][from_coordinate[1]]
+      # updates pieces on borad
+      move_piece(from_coordinate, to_coordinate, piece)
+      i += 1
+    end
+    return self.state_of_piece
+  end
+
   def validates_move( piece, team, from_coordinate, to_coordinate)
     unless state_of_piece[to_coordinate[0]][to_coordinate[1]] != nil
       if piece == "RK" || piece == "BK"
@@ -110,27 +130,30 @@ class Game < ApplicationRecord
   end
 
 # the piece that is jumped is assigned nil
-  def a_piece_jumped(team, from_row, to_row, from_column, to_column)
-    if required_moves(team) != []
+  def a_piece_jumped( from_row, to_row, from_column, to_column)
+    if (from_row - to_row).abs == 2
       state_of_piece[(from_row + to_row)/2][(from_column + to_column)/2] = nil
-      return true
-    else
-      return false
     end
   end
 
-  def steps_to_do_if_no_error_messages(from_coordinate, to_coordinate,
-    piece, team)
+  def move_piece(from_coordinate, to_coordinate, piece)
     # if a piece is eatten, the piece should be removed from the board
-    a_piece_jumped(team, from_coordinate[0], to_coordinate[0],
-      from_coordinate[1], to_coordinate[1])
+    a_piece_jumped(from_coordinate[0], to_coordinate[0], from_coordinate[1], to_coordinate[1])
     # moved piece is no longer at the from coordinate
     state_of_piece[from_coordinate[0]][from_coordinate[1]] = nil
     # that moved piece is now at the to coordinate
     state_of_piece[to_coordinate[0]][to_coordinate[1]] = piece
-    history_of_pieces << [from: from_coordinate, to: to_coordinate]
-    second_jump(team, to_coordinate[0], from_coordinate[0], to_coordinate)
     becoming_king(piece, to_coordinate[0], to_coordinate[1])
+  end
+
+  # updates after a successful move.
+  # add to history and increment turn count if necessary
+  def update_turn(from_coordinate, to_coordinate, team)
+    history_of_pieces << [from_coordinate[0], from_coordinate[1], to_coordinate[0], to_coordinate[1]]
+    unless second_jump(team, to_coordinate[0], from_coordinate[0], to_coordinate)
+      self.turn += 1
+    end
+    save
   end
 
   def error_message(team, piece, from_coordinate, to_coordinate)
@@ -350,18 +373,19 @@ class Game < ApplicationRecord
     end
   end
 
-  # returns a message if a piece can job again
+  # returns a message if a piece can jump again
+  # else increments the turn number
+  # @param team - the team of the player
+  # @return [boolean] whether the player can jump again
   def second_jump(team, to_row, from_row, to_coordinate)
     if team == "black" && (to_row - from_row == 2 || to_row - from_row == -2) &&
       required_moves(team, to_coordinate).length > 0
-      "you can jump again!"
-    elsif team == "black"
-      self.turn += 1
+      true
     elsif team == "red" &&  (to_row - from_row == 2 || to_row - from_row == -2) &&
       required_moves(team, to_coordinate).length > 0
-      "you can jump again!"
-    elsif team == "red"
-      self.turn += 1
+      true
+    else
+      false
     end
   end
 
