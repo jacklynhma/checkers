@@ -69,7 +69,6 @@ class CommentsIndexContainer extends Component {
     .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
 
-
   render(){
 
   let listofcomments = ""
