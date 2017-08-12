@@ -24,7 +24,7 @@
                 <% if current_user.playing?(game) %>
                   <td>Joined! </td>
 
-                  <td><%= link_to("Resign", resign_game_path(game.id), method: "post") %></td>
+                  <td><%= link_to("Leave", resign_game_path(game.id), method: "post") %></td>
                 <% else %>
 
                   <td><%= link_to("Join", join_game_path(game.id), method: "post") %></td>

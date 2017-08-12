@@ -49,9 +49,7 @@ describe('GamesShowContainer', () => {
   expect(wrapper).toHaveState('name');
   });
 
-  it('should render a h1 tag', () => {
-  expect(wrapper.find('h1').text()).toBe ("Title:");
-  });
+
 
 
   describe('it should render a game', () => {

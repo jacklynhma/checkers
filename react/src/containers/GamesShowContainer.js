@@ -22,13 +22,37 @@ class GamesShowContainer extends Component {
       history: [],
       possible: [],
       replayStep: 0,
-      watchingReplay: false
+      watchingReplay: false,
+      paused: false,
+      lastMouseMove: 0
+      
     }
     this.startreplay = this.startreplay.bind(this)
     this.addAMove = this.addAMove.bind(this)
     this.handleChange = this.handleChange.bind(this)
     setInterval(this.getGame.bind(this), 1000)
+    setInterval(this.checkMouseMove.bind(this), 1000)
     this.stepReplay = this.stepReplay.bind(this)
+    this.togglePaused = this.togglePaused.bind(this)
+    this.handleMouseMove = this.handleMouseMove.bind(this)
+  }
+  checkMouseMove() {
+    if (Math.round((new Date()).getTime() / 1000) - this.state.lastMouseMove > 6){
+      this.setState({paused: true})
+    }
+  }
+  handleMouseMove() {
+    // save the last time the mouse has moved
+    let time = Math.round((new Date()).getTime() / 1000)
+    this.setState({lastMouseMove: time, paused: false}) 
+  
+  }
+  
+  togglePaused() {
+    // if clicked  then pause is true, run set interval 
+    let pausedState = !this.state.paused
+    this.setState({paused: pausedState})
+    // if clicked again then pause is false, then do not run set interval   
   }
 
   startreplay() {
@@ -54,7 +78,7 @@ class GamesShowContainer extends Component {
     this.getGame()
   }
   getGame() {
-    if (this.state.watchingReplay ){
+    if (this.state.watchingReplay || this.state.paused ){
       return
     }
     fetch(`/api/v1/games/${this.props.params.id}`, {
@@ -205,7 +229,7 @@ class GamesShowContainer extends Component {
       })
 
       return (
-        <div className="board">
+        <div onMouseMove={this.handleMouseMove} className="board">
           <div className="display row">
             <div className="messages col-xs-8">
               <h2>
@@ -243,6 +267,7 @@ class GamesShowContainer extends Component {
               <div className="chat vertical-center">
                 {this.state.gameid != null &&
                 <CommentsIndexContainer
+                  paused={this.state.paused}
                   key={this.state.gameid}
                   gameid={this.state.gameid}
                   />
@@ -250,6 +275,12 @@ class GamesShowContainer extends Component {
               </div>
               <div >
                 <button onClick={this.startreplay}>Replay</button>
+                
+                {this.state.paused ? (
+                  <span>updates paused </span>
+                ) : (
+                  <span> </span>
+                )}
               </div>
             </div>
           </div>

@@ -16,8 +16,16 @@ class CommentsIndexContainer extends Component {
       blackteamMembers: []
     }
     this.addAComment = this.addAComment.bind(this)
+    setInterval(this.getComment.bind(this), 1000)
   }
   componentDidMount() {
+    this.getComment()
+  }
+
+  getComment() {
+    if (this.props.paused){
+      return
+    }
     fetch(`/api/v1/games/${this.props.gameid}/comments`, {
       credentials: "same-origin"
     })
@@ -61,26 +69,10 @@ class CommentsIndexContainer extends Component {
     .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
 
-
   render(){
-  // if the users leaving comments are attached to the game, display the game
-  // make sure that people of that team can only see it
+
   let listofcomments = ""
-//   let comments = ""
-// // only the people who joined the game can view the comments
-//   if (this.state.game != null && this.state.arrayOfUsers != [] && this.state.blackteamMembers != []){
-//     let ifUserIsInGame = this.state.arrayOfUsers.map((user)=> {
-//       if (user.id == this.state.currentuser.id){
-//         return true
-//       }
-//     })
-//     if (ifUserIsInGame){
-//       let seperatedComments = this.state.comments.map((comment) => {
-//         this.state.blackteamMembers.map((bteam)=> {
-//           if (comment.user_id == bteam.id){
-//             listofcomments = <div>these comments can only be seen by black team</div>
-//           }
-//         })
+
   let post = ""
       let comments = this.state.comments.map((comment)=> {
 
