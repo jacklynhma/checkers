@@ -26,7 +26,7 @@ Technologies:
 - Frontend: React.js, CSS, Bootstrap
 - User Auth: Devise
 - Database: Postgres
-- Testing: RSpec, Capybara, Jasmine, Karma, Enzyme
+- Testing: RSpec, Capybara, Karma, Enzyme
 
 Setup
 ======
