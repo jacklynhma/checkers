@@ -13,7 +13,7 @@
       <tbody>
         <% number = 0 %>
         <% if !@games.nil? %>
-          <%@games = (@games.sort_by { |a, b| a <=> b}) %>
+          <%@games = (@games.sort_by { |a| a.name }) %>
           <% @games.each do |game| %>
             <tr>
               <td><%= number += 1 %></td>
