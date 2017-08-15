@@ -248,6 +248,7 @@ class Game < ApplicationRecord
 # move w/ this starting from coordinate
 # it will return an array of required moves
   def required_moves(team, from_coordinate = nil)
+
     board = state_of_piece
     moves = []
     board.each_with_index do |row, row_index|
@@ -281,6 +282,7 @@ class Game < ApplicationRecord
 
   def calculate_possible_moves(piece, row_index, column_index)
     moves = []
+
     unless (row_index > 6 && piece == "B") || (row_index < 1 && piece == "R")
       if (piece == "R" || piece == "RK" || piece == "BK") && column_index == 7
         if (piece == "R" || piece == "RK" || piece == "BK") &&
@@ -294,28 +296,28 @@ class Game < ApplicationRecord
         end
       elsif (piece == "B" || piece == "RK" || piece == "BK" )&& column_index == 0
         if (piece == "B" || piece == "RK" || piece == "BK") &&
-          state_of_piece[row_index - 1][column_index  + 1] == nil
-          moves << [row_index - 1, column_index  + 1]
+          state_of_piece[row_index + 1][column_index  + 1] == nil
+          moves << [row_index + 1, column_index  + 1]
         end
       elsif (piece == "B" || piece == "RK" || piece == "BK" )&& column_index == 7
         if (piece == "B" || piece == "RK" || piece == "BK") &&
-          state_of_piece[row_index - 1][column_index  - 1] == nil
-          moves << [row_index - 1, column_index  - 1]
+          state_of_piece[row_index + 1][column_index  - 1] == nil
+          moves << [row_index + 1, column_index  - 1]
         end
       end
-      if (piece == "R" || piece == "RK" || piece == "BK") &&
+      if (piece == "R" || piece == "RK" || piece == "BK") && row_index != 0 &&
         state_of_piece[row_index - 1][column_index  - 1] == nil
         moves << [row_index - 1, column_index  - 1]
       end
-      if (piece == "R" || piece == "RK" || piece == "BK") &&
+      if (piece == "R" || piece == "RK" || piece == "BK") && row_index != 0 &&
         state_of_piece[row_index - 1][column_index  + 1] == nil
         moves << [row_index - 1, column_index  + 1]
       end
-      if (piece == "B" || piece == "RK" || piece == "BK") &&
+      if (piece == "B" || piece == "RK" || piece == "BK") && row_index != 7 &&
         state_of_piece[row_index + 1][column_index  + 1] == nil
         moves << [row_index + 1, column_index  + 1]
       end
-      if (piece == "B" || piece == "RK" || piece == "BK") &&
+      if (piece == "B" || piece == "RK" || piece == "BK") && row_index != 7 &&
         state_of_piece[row_index + 1][column_index  - 1] == nil
         moves << [row_index + 1, column_index  - 1]
       end
