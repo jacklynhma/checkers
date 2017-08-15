@@ -25,7 +25,7 @@ class GamesShowContainer extends Component {
       watchingReplay: false,
       paused: false,
       lastMouseMove: 0
-      
+
     }
     this.startreplay = this.startreplay.bind(this)
     this.addAMove = this.addAMove.bind(this)
@@ -44,15 +44,15 @@ class GamesShowContainer extends Component {
   handleMouseMove() {
     // save the last time the mouse has moved
     let time = Math.round((new Date()).getTime() / 1000)
-    this.setState({lastMouseMove: time, paused: false}) 
-  
+    this.setState({lastMouseMove: time, paused: false})
+
   }
-  
+
   togglePaused() {
-    // if clicked  then pause is true, run set interval 
+    // if clicked  then pause is true, run set interval
     let pausedState = !this.state.paused
     this.setState({paused: pausedState})
-    // if clicked again then pause is false, then do not run set interval   
+    // if clicked again then pause is false, then do not run set interval
   }
 
   startreplay() {
@@ -183,7 +183,7 @@ class GamesShowContainer extends Component {
             displayPlayer = <div> {player.first_name}</div>
           }
           return (
-            <div>{displayPlayer}</div>
+            <div key={`players-${player.id}`}>{displayPlayer}</div>
           )
         })
       }
@@ -203,7 +203,7 @@ class GamesShowContainer extends Component {
             displayblackplayer = <div> {player.first_name}</div>
           }
           return (
-            <div>{displayblackplayer}</div>
+            <div key={`player-${player.first_name}`}>{displayblackplayer}</div>
           )
         })
       }
@@ -215,6 +215,7 @@ class GamesShowContainer extends Component {
               row.map((piece, columnNumber)=>{
                 return (
                   <PieceTile
+                    key={`piece-${columnNumber}`}
                     columnNumber = {columnNumber}
                     rowNumber = {rowNumber}
                     handleChange = {this.handleChange}
@@ -267,15 +268,15 @@ class GamesShowContainer extends Component {
               <div className="chat vertical-center">
                 {this.state.gameid != null &&
                 <CommentsIndexContainer
-                  paused={this.state.paused}
                   key={this.state.gameid}
+                  paused={this.state.paused}
                   gameid={this.state.gameid}
                   />
                 }
               </div>
               <div >
                 <button onClick={this.startreplay}>Replay</button>
-                
+
                 {this.state.paused ? (
                   <span>updates paused </span>
                 ) : (
