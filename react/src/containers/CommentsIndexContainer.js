@@ -74,18 +74,16 @@ class CommentsIndexContainer extends Component {
   let listofcomments = ""
 
   let post = ""
-      let comments = this.state.comments.map((comment)=> {
-
-        this.state.arrayOfUsers.map((user)=> {
-          if ( user.id == comment.user_id){
-
-            post = <div>{user.first_name}: {comment.body}</div>
-          }
-        })
-        return (
-          <div>{post}</div>
-        )
-      })
+  let comments = this.state.comments.map((comment, commentIndex)=> {
+    this.state.arrayOfUsers.map((user)=> {
+      if ( user.id == comment.user_id){
+        post = <div>{user.first_name}: {comment.body}</div>
+      }
+    })
+    return (
+      <div key={`comment-${comment.id}`}>{post}</div>
+    )
+  })
 
 
     return (
