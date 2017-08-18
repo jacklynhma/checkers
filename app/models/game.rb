@@ -10,6 +10,7 @@ class Game < ApplicationRecord
   def after_initialize
     setup_game
   end
+
   def playing?(user)
     user_ids.include?(user.id)
   end
@@ -26,7 +27,6 @@ class Game < ApplicationRecord
     ["R", nil, "R", nil, "R", nil, "R", nil]
   ]
   end
-
 
   def setup_game
     self.state_of_piece = starting_board if state_of_piece.nil? ||
@@ -52,9 +52,9 @@ class Game < ApplicationRecord
 
   def off_the_board(to_row, to_column)
    !((to_row <= 7) && (to_row >= 0)) || !((to_column <= 7) && (to_column >= 0))
-
   end
 
+  # returns true if there is another piece you must move
   def piece_must_moved(team, from_coordinate, to_coordinate)
     if required_moves(team) != [] &&
       !required_moves(team).include?(from_coordinate + to_coordinate)
@@ -63,14 +63,14 @@ class Game < ApplicationRecord
       return false
     end
   end
-  # will return true if R piece is a valid move
 
+  # will return true if R piece is a valid move
   def valid_R_move(from_row, from_column, to_row, to_column)
     ((from_column + 1 == to_column) || (from_column - 1 == to_column)) &&
     (from_row - 1 == to_row)
   end
 
-# will return true if B piece is a valid move
+  # will return true if B piece is a valid move
   def valid_B_move(from_row, from_column, to_row, to_column)
     ((from_column + 1 == to_column) || (from_column - 1 == to_column)) &&
     (from_row + 1 == to_row)
@@ -94,6 +94,10 @@ class Game < ApplicationRecord
      return array_of_teams
   end
 
+  #used when a user clicks the replay button
+  # return state of piece as it irritates over the history of pieces
+  # it stops once the index of the history of the piece is greater than
+  # the turn
   def set_board(turn)
     i = 0
     self.state_of_piece = starting_board
@@ -109,7 +113,8 @@ class Game < ApplicationRecord
     return self.state_of_piece
   end
 
-  def validates_move( piece, team, from_coordinate, to_coordinate)
+  #returns true if the from_coordinate and the to coordinate are not illegal moves
+  def validates_move(piece, team, from_coordinate, to_coordinate)
     unless state_of_piece[to_coordinate[0]][to_coordinate[1]] != nil
       if piece == "RK" || piece == "BK"
         valid_R_move(from_coordinate[0], from_coordinate[1], to_coordinate[0],
@@ -129,13 +134,15 @@ class Game < ApplicationRecord
     end
   end
 
-# the piece that is jumped is assigned nil
-  def a_piece_jumped( from_row, to_row, from_column, to_column)
+  # the piece that is jumped is assigned nil
+  def a_piece_jumped(from_row, to_row, from_column, to_column)
     if (from_row - to_row).abs == 2
       state_of_piece[(from_row + to_row)/2][(from_column + to_column)/2] = nil
     end
   end
 
+  # if the move is valid, this method changes the pieces on the borad
+  # depending on what type of valid move it is
   def move_piece(from_coordinate, to_coordinate, piece)
     # if a piece is eatten, the piece should be removed from the board
     a_piece_jumped(from_coordinate[0], to_coordinate[0], from_coordinate[1], to_coordinate[1])
@@ -156,6 +163,7 @@ class Game < ApplicationRecord
     save
   end
 
+  # presents an error message on top of the board if there is an illegal move
   def error_message(team, piece, from_coordinate, to_coordinate)
     if not_your_turn(team, turn)
       "It is not your turn!"
@@ -213,6 +221,7 @@ class Game < ApplicationRecord
     end
   end
 
+  # returns coordinates if there is a piece on the board that jump upward
   def can_eat_up?(row_index, column_index, eatingcolor)
     state = state_of_piece
     if row_index - 2 >= 0
@@ -248,7 +257,6 @@ class Game < ApplicationRecord
 # move w/ this starting from coordinate
 # it will return an array of required moves
   def required_moves(team, from_coordinate = nil)
-
     board = state_of_piece
     moves = []
     board.each_with_index do |row, row_index|
@@ -280,9 +288,9 @@ class Game < ApplicationRecord
     return moves
   end
 
+  # gives the possible moves a user can make based off the piece they clicked
   def calculate_possible_moves(piece, row_index, column_index)
     moves = []
-
     unless (row_index > 6 && piece == "B") || (row_index < 1 && piece == "R")
       if (piece == "R" || piece == "RK" || piece == "BK") && column_index == 7
         if (piece == "R" || piece == "RK" || piece == "BK") &&
@@ -324,6 +332,10 @@ class Game < ApplicationRecord
     end
     return moves
   end
+
+  # used to help determine if there is a winner given the condition that the opposing user
+  # can no longer move
+  # returns false if the opposing user has no possible moves
   def possible_moves(piece, row_index, column_index)
     unless (row_index > 6 && piece == "B") || (row_index < 1 && piece == "R")
       if (piece == "R" || piece == "RK" || piece == "BK") && column_index == 7
@@ -365,6 +377,7 @@ class Game < ApplicationRecord
       end
     end
   end
+
   # if a piece reaches the end of opoosing board, it will be kinged
   # renaming a piece king
   def becoming_king(piece, to_row, to_column)
@@ -391,14 +404,14 @@ class Game < ApplicationRecord
     end
   end
 
+  # another factor if the user wins. if there are no longer any opposing pieces
+  # on the board, then the other user wins.
   def team_missing_piece
-
     board = state_of_piece
     presence_of_team_black = []
     presence_of_team_red = []
     board.each_with_index do |row, row_index|
       if row.include?("B") || row.include?("BK")
-
         presence_of_team_black << true
       end
       if row.include?("R") || row.include?("RK")
@@ -413,7 +426,9 @@ class Game < ApplicationRecord
       return "everyone is present"
     end
   end
-  #
+
+  # returns the winner of the game if there are only one set of pieces on the board
+  # returns winner if the opposing player does not have any more possible moves
   def winner
     winner = "no one"
     board = state_of_piece
@@ -429,13 +444,11 @@ class Game < ApplicationRecord
           if piece != nil && piece&.first == "B"
             black_moves << [possible_moves(piece, row_index, column_index), piece]
           end
-
           if piece != nil && piece&.first == "R"
             red_moves << [possible_moves(piece, row_index, column_index), piece]
           end
         end
       end
-
       black_moves = black_moves.select { |move| move[0] == true}
       if black_moves.blank?
         winner = "Team Red Wins!"
