@@ -13,7 +13,6 @@ class GamesController < ApplicationController
 
   # Assigning players to teams
   def join
-
     @game = Game.find(params[:id])
     if @game.gameplayers.where(team: "red").count <  @game.gameplayers.where(team: "black").count
       @game.gameplayers.create(user: current_user, team: "red")

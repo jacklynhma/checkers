@@ -29,7 +29,6 @@ class Api::V1::GamesController < ApplicationController
   end
 
   def update
-# binding.pry
     @game = Game.find(params[:id])
     # make sure a piece deletes from a board before you put a piece on the board
     message = ""
@@ -37,9 +36,6 @@ class Api::V1::GamesController < ApplicationController
       from_coordinate = [params[:coordinates][0], params[:coordinates][1]]
       to_coordinate = [params[:coordinates][2], params[:coordinates][3]]
     end
-
-    # if the current game is not reset and
-
 
     team = current_user.defining_team(@game)
     piece = @game.state_of_piece[from_coordinate[0]][from_coordinate[1]]
