@@ -18,10 +18,12 @@ class CommentsIndexContainer extends Component {
     this.addAComment = this.addAComment.bind(this)
     setInterval(this.getComment.bind(this), 1000)
   }
+
   componentDidMount() {
     this.getComment()
   }
 
+  // if the user is idle, do not fetch
   getComment() {
     if (this.props.paused){
       return
@@ -38,6 +40,7 @@ class CommentsIndexContainer extends Component {
     })
   }
 
+  // post the new comment
   addAComment(formPayload){
     fetch(`/api/v1/games/${this.props.gameid}/comments`,{
       method: "POST",
@@ -72,7 +75,6 @@ class CommentsIndexContainer extends Component {
   render(){
 
   let listofcomments = ""
-
   let post = ""
   let comments = this.state.comments.map((comment, commentIndex)=> {
     this.state.arrayOfUsers.map((user)=> {
@@ -87,8 +89,7 @@ class CommentsIndexContainer extends Component {
 
 
     return (
-
-      <div >
+      <div>
         <div className="gamelist">
           Comments:
           {comments}

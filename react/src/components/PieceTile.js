@@ -7,6 +7,7 @@ const PieceTile = (props) => {
   let colorIndex = (props.columnNumber+props.rowNumber) % 2;
   let squareclicked = () => props.handleChange(props.rowNumber, props.columnNumber)
 
+  // assigns the color of the piece
   if (props.piece == null){
   } else if (props.piece == "B") {
     piece = <div className="blackpiece"></div>
@@ -24,8 +25,9 @@ const PieceTile = (props) => {
     </div>
   }
 
+  // highlights any of the possible moves on the board
+  // triggered by clicking on one of the user's piece
   let tileColor = colors[colorIndex] + " square"
-
   if (props.possible !== null) {
     if (props.possible.length > 0){
       props.possible.forEach((tile) => {
@@ -41,7 +43,6 @@ const PieceTile = (props) => {
         }
       })
     }
-
   }
   return (
     <div key={`${props.rowNumber},${props.columnNumber}`} className={tileColor} onClick={squareclicked}>
