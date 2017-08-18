@@ -27,7 +27,7 @@ class CommentsFormContainer extends Component {
 
   handleCommentSubmit(event){
     event.preventDefault();
-    
+
     let formPayload = {
       body: this.state.body
     }
@@ -37,8 +37,7 @@ class CommentsFormContainer extends Component {
 
   render() {
 
-// on click i would like you to make this change
-
+    // on submission i would like you to make this change
     return(
       <form onSubmit={this.handleCommentSubmit}>
         <div>

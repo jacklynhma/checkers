@@ -14,10 +14,8 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   def create
-
     @game = Game.find(params[:game_id])
     @comment = @game.comments.new(comment_params)
-
     @comment.user = current_user
     current_user_team = current_user.gameplayers.find_by(game_id: @game.id)
     if @comment.save
@@ -26,7 +24,7 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   private
-
+  
   def comment_params
     params.require(:comment).permit(:body)
   end
