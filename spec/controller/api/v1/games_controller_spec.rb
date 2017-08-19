@@ -20,6 +20,27 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     end
   end
 
+  describe "GET#history" do
+    # return a list of games
+    # need to have a user to sign in
+    # sign_in_as etc etc
+    it "show the game" do
+      get :history, params: {id: first_game.id, turn: 0}
+
+      expect(response.status).to eq 200
+      expect(first_game.set_board(0)).to eq   [
+        [nil, "B", nil, "B", nil, "B", nil, "B"],
+        ["B", nil, "B", nil, "B", nil , "B", nil],
+        [nil, "B", nil, "B", nil, "B", nil, "B"],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        ["R", nil, "R", nil, "R", nil, "R", nil],
+        [nil, "R", nil, "R", nil, "R", nil, "R"],
+        ["R", nil, "R", nil, "R", nil, "R", nil]
+      ]
+    end
+  end
+
   describe "PUT#update" do
     it "update game with new move " do
       sign_in first_user
