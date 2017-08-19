@@ -77,7 +77,7 @@ module.exports = function(config) {
       // use karma-spec-reporter to report results to the browser's console
       'spec',
       // use karma-coverage to report test coverage
-      // 'coverage'
+      'coverage'
     ],
 
     // karma-spec-reporter configuration
