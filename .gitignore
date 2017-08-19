@@ -20,5 +20,5 @@
 /node_modules
 /app/assets/javascripts/bundle.js
 /react/coverage
-/coverage
+/coverage/*
 .env
