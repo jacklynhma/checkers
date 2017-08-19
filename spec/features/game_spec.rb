@@ -1,24 +1,19 @@
 require 'spec_helper'
 
 feature "User sees the show page for games" do
-  let!(:newuser) do
-    User.create( first_name: "Jackie", email: "j@mail.com", password: "apples"  )
-  end
-  let!(:game) do
-    Game.create( name: "poro121" )
-  end
-  let!(:gameshow) do
-    Gameplayer.create(team: "black", user_id: User.first.id, game_id: Game.first.id )
-  end
+  let!(:newuser) {User.create(first_name: "Jackie", email: "j@mail.com", password: "apples")}
+  let!(:game) {Game.create( name: "poro121" )}
+  let!(:gameshow) {Gameplayer.create(team: "black", user_id: User.first.id, game_id: Game.first.id )}
 
+  scenario "creating a game " do
+   visit root_path
+   click_link 'Sign In'
+   fill_in 'Email', with: 'j@mail.com'
+   fill_in 'Password', with: 'apples'
+   click_button 'Log in'
+   fill_in 'Title', with: "Testing"
+   click_button "Create Game"
 
-  scenario "redirect game since user is not logged in " do
-    visit "/"
-    click_link("poro121")
-    fill_in 'Email', with: "j@mail.com"
-    fill_in 'Password', with: 'apples'
-    click_button "Log in"
-
-    expect(page).to have_content("Signed in successfully")
-  end
+   expect(page).to have_content("Team Checkers")
+ end
 end
