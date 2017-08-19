@@ -66,7 +66,7 @@ class GamesShowContainer extends Component {
 
   stepReplay() {
     fetch(`/api/v1/games/${this.props.params.id}/history?turn=${this.state.replayStep}`)
-    .then(response => { return response.json()})
+    .then(response => {return response.json()})
     .then(body => {
       this.setState({board: body.game.state_of_piece, replayStep: this.state.replayStep + 1})
       if (this.state.replayStep <= this.state.history.length) {
@@ -84,14 +84,15 @@ class GamesShowContainer extends Component {
   }
 
   getGame() {
-    if (this.state.watchingReplay || this.state.paused ){
+    if (this.state.watchingReplay || this.state.paused){
       return
     }
     fetch(`/api/v1/games/${this.props.params.id}`, {
       credentials: "same-origin"
     })
-    .then(response => { return response.json()})
+    .then(response => {return response.json()})
     .then(body => {
+
       this.setState({ gameid: body.game.id, board: body.game.state_of_piece,
         turn: body.game.turn,
         winner: body.winner, team: body.team, redplayers: body.redplayers,

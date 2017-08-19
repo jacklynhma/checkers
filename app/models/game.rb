@@ -45,11 +45,13 @@ class Game < ApplicationRecord
     end
   end
 
+  # returns true if it is not your piece
   def not_your_piece(team, piece)
     !(team == "black" && piece&.first == "B") && !(team == "red" &&
     piece&.first == "R")
   end
 
+  # returns true if piece is off the board
   def off_the_board(to_row, to_column)
    !((to_row <= 7) && (to_row >= 0)) || !((to_column <= 7) && (to_column >= 0))
   end

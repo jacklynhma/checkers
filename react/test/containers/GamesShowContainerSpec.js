@@ -6,7 +6,7 @@ describe('GamesShowContainer', () => {
   let wrapper;
   beforeEach(() => {
 
-    spyOn(GamesShowContainer.prototype, 'componentDidMount')
+    spyOn(GamesShowContainer.prototype, 'getGame')
     wrapper = mount(
       <GamesShowContainer
         params={{id: 1}}
@@ -49,17 +49,13 @@ describe('GamesShowContainer', () => {
   expect(wrapper).toHaveState('name');
   });
 
-
-
-
   describe('it should render a game', () => {
     beforeEach(() => {
-    let name = "test"
-    wrapper.setState({ name: "test"})
+      let name = "test"
+      wrapper.setState({ name: "test"})
     })
     it('should render the game name', () => {
       expect(wrapper.text()).toMatch("test")
     })
-
   })
 });
