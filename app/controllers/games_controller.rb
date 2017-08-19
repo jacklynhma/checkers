@@ -7,10 +7,6 @@ class GamesController < ApplicationController
     @game = Game.new
   end
 
-  def show
-    @game = Game.find(params[:id])
-  end
-
   # Assigning players to teams
   def join
     @game = Game.find(params[:id])
