@@ -1,7 +1,6 @@
 
 require "rails_helper"
 
-
 describe Game do
   it { should have_valid(:name).when("Test") }
   it { should_not have_valid(:name).when(nil, "") }
@@ -72,6 +71,53 @@ describe "#set_board" do
     end
   end
 end
+
+describe "#playing?" do
+  let!(:games1) {Game.create(name: "jackie" )}
+  let!(:first_user) { User.create(first_name: "jackie", email: "jackie@gmail.com", password: "apples")}
+  let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: games1.id )}
+  let!(:second_user) { User.create(first_name: "poro", email: "poro@fire.com", password: "apples")}
+
+  it "returns true if the user is included in the game " do
+    expect(games1.playing?(first_user)).to eq true
+    expect(games1.playing?(second_user)).to eq false
+  end
+end
+
+describe "#starting_board"do
+  let!(:games1) {Game.create(name: "jackie" )}
+  it "return starting board " do
+    expect(games1.starting_board).to eq [
+      [nil, "B", nil, "B", nil, "B", nil, "B"],
+      ["B", nil, "B", nil, "B", nil , "B", nil],
+      [nil, "B", nil, "B", nil, "B", nil, "B"],
+      [nil, nil, nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil, nil, nil],
+      ["R", nil, "R", nil, "R", nil, "R", nil],
+      [nil, "R", nil, "R", nil, "R", nil, "R"],
+      ["R", nil, "R", nil, "R", nil, "R", nil]
+    ]
+  end
+end
+
+describe "#after_intialize #setup_game" do
+  let!(:games1) {Game.create(name: "jackie", state_of_piece: "")}
+  it "returns the starting board " do
+
+    expect(games1.state_of_piece).to eq [
+    [nil, "B", nil, "B", nil, "B", nil, "B"],
+    ["B", nil, "B", nil, "B", nil , "B", nil],
+    [nil, "B", nil, "B", nil, "B", nil, "B"],
+    [nil, nil, nil, nil, nil, nil, nil, nil],
+    [nil, nil, nil, nil, nil, nil, nil, nil],
+    ["R", nil, "R", nil, "R", nil, "R", nil],
+    [nil, "R", nil, "R", nil, "R", nil, "R"],
+    ["R", nil, "R", nil, "R", nil, "R", nil]
+    ]
+    expect(games1.history_of_pieces).to eq []
+  end
+end
+
 describe "#winner" do
   context "red has no more pieces" do
     let (:game) do
@@ -495,11 +541,8 @@ end
 
 describe "# can_eat_up?" do
   context "checks the black piece's ability to eat downwards" do
-    let (:user) do
-      User.new({first_name: "jackie", email: "jackie@mail.com", password: "apples"})
-    end
-    let (:game) do
-      Game.new({name: "testing", state_of_piece:
+    let (:user) {User.new(first_name: "jackie", email: "jackie@mail.com", password: "apples")}
+    let!(:game) {Game.new(name: "testing", state_of_piece:
       [[nil, "B", nil, nil, nil, nil, "R", nil],
       [nil, nil, nil, nil, nil, "BK" , nil, nil],
       [nil, nil, nil, nil, "R", nil, nil, nil],
@@ -508,11 +551,8 @@ describe "# can_eat_up?" do
       [nil, nil, "RK", nil, nil, "R", nil, "R"],
       [nil, "B", nil, nil, nil, nil, "B", nil],
       [nil, nil, nil, nil, nil, "R", nil, "R"]]
-      })
-    end
-    let (:gameplay) do
-      Gameplayer.new({team: "black", user_id: User.last.id, game_id: Game.last.id})
-    end
+      )}
+    let!(:gameplay) {Gameplayer.create(team: "black", user_id: user.id, game_id: game.id)}
     it "will return an array to_coordinates if true" do
       expect(game.can_eat_up?(4, 4, "B")).to eq [2, 6]
       expect(game.can_eat_up?(1, 5, "R")).to eq nil
@@ -577,30 +617,142 @@ describe "#becoming_king" do
     end
   end
 end
-# describe "# team_players" do
-#   context " returns an array of players" do
-#     let (:user) do
-#       User.new({first_name: "jackie", email: "jackie@mail.com", password: "apples"})
-#     end
-#     let (:game) do
-#       Game.new({name: "testing", state_of_piece:
-#       [[nil, "B", nil, nil, nil, nil, nil, nil],
-#       [nil, nil, nil, nil, nil, nil , nil, nil],
-#       [nil, nil, nil, nil, "R", nil, "R", nil],
-#       [nil, nil, nil, nil, nil, "B", nil, nil],
-#       [nil, nil, nil, nil, "R", nil, "R", nil],
-#       [nil, nil, nil, nil, nil, "R", nil, "R"],
-#       [nil, nil, nil, nil, nil, nil, "B", nil],
-#       [nil, nil, nil, nil, nil, "R", nil, "R"]]
-#       })
-#     end
-#     let (:gameplay) do
-#       Gameplayer.new({team: "black", user_id: User.last.id, game_id: Game.last.id})
-#     end
-#     it "will return an array of teams" do
-#       binding.pry
-#       expect(game.team_players[0]).to eq ["jackie"]
-#       expect(game.team_players[1]).to eq []
-#     end
-#   end
-# end
+
+describe "# team_players" do
+  context " returns an array of players" do
+    let!(:user) {User.create(first_name: "jackie", email: "jackie@mail.com", password: "apples")}
+    let!(:game) {Game.create(name: "testing", state_of_piece:
+      [[nil, "B", nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil , nil, nil],
+      [nil, nil, nil, nil, "R", nil, "R", nil],
+      [nil, nil, nil, nil, nil, "B", nil, nil],
+      [nil, nil, nil, nil, "R", nil, "R", nil],
+      [nil, nil, nil, nil, nil, "R", nil, "R"],
+      [nil, nil, nil, nil, nil, nil, "B", nil],
+      [nil, nil, nil, nil, nil, "R", nil, "R"]]
+      )}
+    let!(:gameplay) {Gameplayer.create(team: "black", user_id: user.id, game_id: game.id)}
+    it "will return an array of teams" do
+      expect(game.team_players[0][0].first_name).to eq "jackie"
+      expect(game.team_players[1]).to eq []
+    end
+  end
+  context " returns an array of players" do
+    let!(:user) {User.create(first_name: "jackie", email: "jackie@mail.com", password: "apples")}
+    let!(:user1) {User.create(first_name: "poro", email: "poro@mail.com", password: "apples")}
+
+    let!(:game) {Game.create(name: "testing", state_of_piece:
+      [[nil, "B", nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil , nil, nil],
+      [nil, nil, nil, nil, "R", nil, "R", nil],
+      [nil, nil, nil, nil, nil, "B", nil, nil],
+      [nil, nil, nil, nil, "R", nil, "R", nil],
+      [nil, nil, nil, nil, nil, "R", nil, "R"],
+      [nil, nil, nil, nil, nil, nil, "B", nil],
+      [nil, nil, nil, nil, nil, "R", nil, "R"]]
+      )}
+    let!(:gameplay) {Gameplayer.create(team: "black", user_id: user.id, game_id: game.id)}
+    let!(:gameplay1) {Gameplayer.create(team: "red", user_id: user1.id, game_id: game.id)}
+    it "will return an array of teams" do
+
+      expect(game.team_players[0][0].first_name).to eq "jackie"
+      expect(game.team_players[1][0].first_name).to eq "poro"
+    end
+  end
+end
+
+describe "#a_piece_jumped" do
+  context "expect piece jumped to be nil" do
+    let!(:game) {Game.create(name: "testing", state_of_piece:
+      [[nil, "B", nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil , nil, nil],
+      [nil, nil, nil, nil, "R", nil, "R", nil],
+      [nil, nil, nil, nil, nil, "B", nil, nil],
+      [nil, nil, nil, nil, "B", nil, "R", nil],
+      [nil, nil, nil, nil, nil, "R", nil, "R"],
+      [nil, nil, nil, nil, nil, nil, "B", nil],
+      [nil, nil, nil, nil, nil, "R", nil, "R"]]
+      )}
+    it "removes the piece that was jumped" do
+      game.a_piece_jumped(5, 3, 3, 5)
+      expect(game.state_of_piece[(5 + 3)/2][(5 + 3)/2]).to eq nil
+    end
+  end
+end
+
+describe "#update_turn" do
+  context "expect piece jumped to be nil" do
+    let!(:game) {Game.create(name: "testing", state_of_piece:
+      [[nil, "B", nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil , nil, nil],
+      [nil, nil, nil, nil, "R", nil, "R", nil],
+      [nil, nil, nil, nil, nil, "B", nil, nil],
+      [nil, nil, nil, nil, "B", nil, "R", nil],
+      [nil, nil, nil, nil, nil, "R", nil, "R"],
+      [nil, nil, nil, nil, nil, nil, "B", nil],
+      [nil, nil, nil, nil, nil, "R", nil, "R"]], turn: 2
+      )}
+    it "removes the piece that was jumped" do
+      game.update_turn([5, 3], [3, 5], "red")
+      expect(game.history_of_pieces).to eq [[5, 3, 3, 5]]
+      expect(game.turn).to eq 3
+    end
+  end
+  # context "expect piece jumped to be nil" do
+  #   let!(:game) {Game.create(name: "testing", state_of_piece:
+  #     [[nil, "B", nil, nil, nil, nil, nil, nil],
+  #     [nil, nil, nil, nil, nil, nil , nil, nil],
+  #     [nil, nil, nil, nil, "B", nil, "R", nil],
+  #     [nil, nil, nil, nil, nil, "B", nil, nil],
+  #     [nil, nil, nil, nil, "B", nil, "R", nil],
+  #     [nil, nil, nil, nil, nil, "R", nil, "R"],
+  #     [nil, nil, nil, nil, nil, nil, "B", nil],
+  #     [nil, nil, nil, nil, nil, "R", nil, "R"]], turn: 2
+  #     )}
+  #   it "removes the piece that was jumped" do
+  #     game.update_turn([5, 3], [3, 5], "red")
+  #     expect(game.history_of_pieces).to eq [[5, 3, 3, 5]]
+  #     expect(game.turn).to eq 2
+  #   end
+  # end
+end
+
+describe "#error_message" do
+  context "illegal moves occured"do
+    let!(:game) {Game.create(name: "hogwarts", state_of_piece:
+    [[nil, "B", nil, nil, nil, nil, nil, nil],
+    [nil, nil, nil, nil, nil, nil , nil, "B"],
+    [nil, nil, nil, nil, "R", nil, nil, nil],
+    [nil, nil, nil, nil, nil, "B", nil, nil],
+    [nil, nil, nil, nil, "B", nil, "R", nil],
+    [nil, nil, nil, "R", nil, "R", nil, "B"],
+    [nil, nil, nil, nil, nil, nil, "B", nil],
+    [nil, nil, nil, nil, nil, "R", nil, "R"]],
+    turn: 1)}
+    it "reutrns an error message" do
+      expect(game.error_message("red", "R", [5, 3], [3, 5])).to eq ("It is not your turn!")
+      expect(game.error_message("black", nil, [0, 0], [1, 1])).to eq ("That piece does not exist")
+      expect(game.error_message("black", "R", [5, 3], [3, 5])).to eq ("This is not your piece")
+      expect(game.error_message("black", "B", [1, 7], [2, 8])).to eq ("You are off the board")
+      expect(game.error_message("black", "B",  [1, 7], [2, 6])).to eq ("There is another piece you MUST move")
+
+    end
+  end
+  context "illegal moves occured"do
+    let!(:game) {Game.create(name: "hogwarts", state_of_piece:
+    [[nil, "B", nil, nil, nil, nil, nil, nil],
+    [nil, nil, nil, nil, nil, nil , nil, "B"],
+    [nil, nil, nil, nil, "R", nil, nil, nil],
+    [nil, nil, nil, nil, nil, "B", nil, nil],
+    [nil, nil, nil, nil, "B", nil, "R", nil],
+    [nil, nil, nil, "R", nil, "R", nil, "B"],
+    [nil, nil, "B", nil, nil, nil, "B", nil],
+    [nil, nil, nil, nil, nil, "R", nil, "R"]],
+    turn: 1)}
+    it "reutrns an error message" do
+
+      expect(game.error_message("black", "B", [4, 4], [4, 4])).to eq ("That is not a legal move")
+    end
+  end
+
+end

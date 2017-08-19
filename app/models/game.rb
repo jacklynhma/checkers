@@ -143,7 +143,7 @@ class Game < ApplicationRecord
     end
   end
 
-  # if the move is valid, this method changes the pieces on the borad
+  # if the move is valid, this method changes the pieces on the board
   # depending on what type of valid move it is
   def move_piece(from_coordinate, to_coordinate, piece)
     # if a piece is eatten, the piece should be removed from the board
