@@ -1,7 +1,6 @@
 ![Build Status](https://codeship.com/projects/68475c30-56db-0135-3fa1-7e1de17b1d2f/status?branch=master)
 ![Code Climate](https://codeclimate.com/github/jacklynhma/checkers.png)
-[![Coverage Status](https://coveralls.io/repos/github/jacklynhma/checkers/badge.svg)](https://coveralls.io/github/jacklynhma/checkers)
-
+[![Coverage Status](https://coveralls.io/repos/github/jacklynhma/checkers/badge.svg?branch=master)](https://coveralls.io/github/jacklynhma/checkers?branch=master)
 # README
 
 Team Checkers
