@@ -27,7 +27,6 @@ class CommentsFormContainer extends Component {
 
   handleCommentSubmit(event){
     event.preventDefault();
-
     let formPayload = {
       body: this.state.body
     }

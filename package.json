@@ -6,7 +6,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "heroku-postbuild": "NODE_ENV=production npm run webpack -- -p",
-    "test": "node_modules/.bin/karma start karma.conf.js",
+    "test": "node_modules/.bin/karma start karma.conf.js --single-run",
     "start": "npm run webpack -- --watch",
     "webpack": "node_modules/.bin/webpack --config ./react/webpack.config.js"
   },
