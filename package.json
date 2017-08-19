@@ -2,7 +2,7 @@
   "name": "checkers",
   "private": true,
   "version": "1.0.0",
-  "description": "",
+  "description": " ",
   "main": "webpack.config.js",
   "scripts": {
     "heroku-postbuild": "NODE_ENV=production npm run webpack -- -p",
