@@ -68,6 +68,11 @@ div.possiblechoices {
   overflow: scroll;
 }
 
+.userProfile.col-xs-12 {
+  width: 500px;
+  border: 1px solid #eee;
+}
+
 .row {
   display: flex;
   justify-content: center;
