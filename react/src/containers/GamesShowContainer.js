@@ -241,58 +241,60 @@ class GamesShowContainer extends Component {
     })
 
     return (
-      <div onMouseMove={this.handleMouseMove} className="board">
-        <div className="display row">
-          <div className="messages col-xs-8">
-            <h2>
-              {this.state.message != null &&
-                this.state.message
-              }
-            </h2>
-            <h1>
-              {this.state.name != null &&
-                this.state.name
-              }
-            </h1>
-            <div>
+      <div className="row">
+        <div onMouseMove={this.handleMouseMove} className="board">
+          <div className="display row">
+            <div className="messages col-xs-8">
               <h2>
-              {winner}
-              {turn}
-            </h2>
-            </div>
-            <div className="playingboard">
-              {board}
-              {team}
-              <div className="row callout">
-                <div className="col-xs-4">
-                  <h4>Red team:</h4>
-                  {redTeam}
-                </div>
-                <div className="col-xs-4">
-                  <h4>Black team:</h4>
-                  {blackTeam}
+                {this.state.message != null &&
+                  this.state.message
+                }
+              </h2>
+              <h1>
+                {this.state.name != null &&
+                  this.state.name
+                }
+              </h1>
+              <div>
+                <h2>
+                {winner}
+                {turn}
+              </h2>
+              </div>
+              <div className="playingboard">
+                {board}
+                {team}
+                <div className="row callout">
+                  <div className="col-xs-4">
+                    <h4>Red team:</h4>
+                    {redTeam}
+                  </div>
+                  <div className="col-xs-4">
+                    <h4>Black team:</h4>
+                    {blackTeam}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="col-xs-4">
-            <div className="chat vertical-center">
-              {this.state.gameid != null &&
-              <CommentsIndexContainer
-                key={this.state.gameid}
-                paused={this.state.paused}
-                gameid={this.state.gameid}
-                />
-              }
-            </div>
-            <div >
-              <button onClick={this.startreplay}>Replay</button>
+            <div className="col-xs-4">
+              <div className="chat vertical-center">
+                {this.state.gameid != null &&
+                <CommentsIndexContainer
+                  key={this.state.gameid}
+                  paused={this.state.paused}
+                  gameid={this.state.gameid}
+                  />
+                }
+              </div>
+              <div >
+                <button onClick={this.startreplay}>Replay</button>
 
-              {this.state.paused ? (
-                <span>updates paused </span>
-              ) : (
-                <span> </span>
-              )}
+                {this.state.paused ? (
+                  <span>updates paused </span>
+                ) : (
+                  <span> </span>
+                )}
+              </div>
             </div>
           </div>
         </div>

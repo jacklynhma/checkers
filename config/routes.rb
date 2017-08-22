@@ -6,11 +6,13 @@ Rails.application.routes.draw do
     end
   end
   # static pages is react
+
+  devise_for :users
+  resources :users, only: [:index, :show, :destroy]
   root "games#index"
   get '/games/:id', to: 'static_pages#index'
   get '/games/:game_id/comments', to: 'static_pages#index'
 
-  devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   # get '/games', to: 'static_pages#index'
   namespace :api do
