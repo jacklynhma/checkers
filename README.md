@@ -4,7 +4,7 @@
 # README
 
 Team Checkers
-========================
+=======================
 
 http://team-checkers.herokuapp.com/
 
