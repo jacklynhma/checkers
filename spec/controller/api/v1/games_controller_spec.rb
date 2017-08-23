@@ -13,9 +13,12 @@ let!(:first_match) { Gameplayer.create(team: "black", user_id: first_user.id, ga
     # need to have a user to sign in
     # sign_in_as etc etc
     it "show the game" do
+      sign_in first_user
       get :show, params: {id: first_game.id}
+      returned_json = JSON.parse(response.body)
 
       expect(response.status).to eq 200
+      expect(response.content_type).to eq("application/json")
       expect(first_user.gameplayers.find_by(game_id: first_game.id).team).to eq("black")
     end
   end

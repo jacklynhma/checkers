@@ -63,6 +63,7 @@ let!(:third_user) { User.create(first_name: "harry", email: "harry@nyc.com", pas
       post :create, params: {game: {name: ""}}
 
       expect(response.status).to eq 200
+      expect(response.content_type).to eq "text/html"
     end
   end
 end
