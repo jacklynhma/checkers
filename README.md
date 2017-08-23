@@ -5,7 +5,7 @@
 
 Team Checkers
 =======================
-hello
+
 
 http://team-checkers.herokuapp.com/
 
