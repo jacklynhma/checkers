@@ -160,88 +160,86 @@ class GamesShowContainer extends Component {
   }
 
   render(){
-    let winner = "";
-      if (this.state.winner == "no one"){
-        winner == ""
+  let winner = "";
+    if (this.state.winner == "no one"){
+      winner == ""
+    } else {
+      winner = this.state.winner
+    }
+
+  let turn = "";
+  if (this.state.turn % 2 == 1 && this.state.winner == "no one") {
+    turn = "It is black's turn"
+  }
+  else if (this.state.turn % 2 == 0 && this.state.winner == "no one"){
+    turn = "It is red's turn"
+  }
+
+  let redTeam = ""
+  let displayPlayer = ""
+  if (this.state.redplayers != []){
+    redTeam = this.state.redplayers.map((player) => {
+      if (this.state.currentuser.id == player.id) {
+        displayPlayer = <div className="bgcurrentUser"> {player.first_name}</div>
       } else {
-        winner = this.state.winner
+        displayPlayer = <div> {player.first_name}</div>
       }
-
-    let turn = "";
-      if (this.state.turn % 2 == 1 && this.state.winner == "no one") {
-        turn = "It is black's turn"
-      }
-      else if (this.state.turn % 2 == 0 && this.state.winner == "no one"){
-        turn = "It is red's turn"
-      }
-
-    let redTeam = ""
-    let displayPlayer = ""
-    if (this.state.redplayers != []){
-      redTeam = this.state.redplayers.map((player) => {
-        if (this.state.currentuser.id == player.id) {
-          displayPlayer = <div className="bgcurrentUser"> {player.first_name}</div>
-        } else {
-          displayPlayer = <div> {player.first_name}</div>
-        }
-        return (
-          <div key={`players-${player.id}`}>{displayPlayer}</div>
-        )
-      })
-    }
-
-    let team = ""
-    if (this.state.team == "none"){
-      team = <h3>You are a spectator</h3>
-    } else if (this.state.team != "none"){
-      team = <h3> </h3>
-    }
-
-    let blackTeam = ""
-    let displayblackplayer = ""
-    if (this.state.blackplayers != []){
-      blackTeam = this.state.blackplayers.map((player) => {
-        if (this.state.currentuser.id == player.id) {
-          displayblackplayer = <div className="bgcurrentUser"> {player.first_name}</div>
-        } else {
-          displayblackplayer = <div> {player.first_name}</div>
-        }
-        return (
-          <div key={`player-${player.first_name}`}>{displayblackplayer}</div>
-        )
-      })
-    }
-
-    let board = ""
-      board = this.state.board.map((row, rowNumber)=> {
-      return(
-        <div key={`row-${rowNumber}`}className="row">
-          {
-            row.map((piece, columnNumber)=>{
-              return (
-                <BoardTile
-                  key={`piece-${columnNumber}`}
-                  columnNumber = {columnNumber}
-                  rowNumber = {rowNumber}
-                  handleChange = {this.handleChange}
-                  piece = {piece}
-                  possible = {this.state.possible}
-                />
-              )
-            })
-          }
-        </div>
+      return (
+        <div key={`players-${player.id}`}>{displayPlayer}</div>
       )
     })
+  }
 
-    return (
-      <div className="row">
-        <div onMouseMove={this.handleMouseMove} className="board">
-          <div className="display row">
+  let team = ""
+  if (this.state.team == "none"){
+    team = <h3>You are a spectator</h3>
+  } else if (this.state.team != "none"){
+    team = <h3> </h3>
+  }
+
+  let blackTeam = ""
+  let displayblackplayer = ""
+  if (this.state.blackplayers != []){
+    blackTeam = this.state.blackplayers.map((player) => {
+      if (this.state.currentuser.id == player.id) {
+        displayblackplayer = <div className="bgcurrentUser"> {player.first_name}</div>
+      } else {
+        displayblackplayer = <div> {player.first_name}</div>
+      }
+      return (
+        <div key={`player-${player.first_name}`}>{displayblackplayer}</div>
+      )
+    })
+  }
+
+  let board = ""
+    board = this.state.board.map((row, rowNumber)=> {
+    return(
+      <div key={`row-${rowNumber}`}className="row">
+        {
+          row.map((piece, columnNumber)=>{
+            return (
+              <BoardTile
+                key={`piece-${columnNumber}`}
+                columnNumber = {columnNumber}
+                rowNumber = {rowNumber}
+                handleChange = {this.handleChange}
+                piece = {piece}
+                possible = {this.state.possible}
+              />
+            )
+          })
+        }
+      </div>
+    )
+  })
+
+  return (
+    <div className="row">
+      <div onMouseMove={this.handleMouseMove} className="board">
+        <div className="display">
+          <div className="row">
             <div className="messages col-xs-8">
-              <div>
-
-              </div>
               <h1>
                 {this.state.name != null &&
                   this.state.name
@@ -253,30 +251,34 @@ class GamesShowContainer extends Component {
                 {turn}
               </h2>
               </div>
-              <div className="playingboard">
-                {board}
-                {team}
-                <div className="row callout">
-                  <div className="col-xs-4">
-                    <h4>Red team:</h4>
-                    {redTeam}
-                  </div>
-                  <div className="col-xs-4">
-                    <h4>Black team:</h4>
-                    {blackTeam}
-                  </div>
+            </div>
+            <div className="displayBottom col-xs-4">
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-xs-8 playingboard">
+              {board}
+              {team}
+              <div className="teams row callout">
+                <div className="col-xs-4">
+                  <h4>Red team:</h4>
+                  {redTeam}
+                </div>
+                <div className="col-xs-4">
+                  <h4>Black team:</h4>
+                  {blackTeam}
                 </div>
               </div>
             </div>
-            <div className="col-xs-4">
+            <div className="col-xs-4 chat vertical-center">
               <div>
-                {this.state.message ? (
-                  <div className="errorMessage">{this.state.message}</div>
-                ) : (
-                  <div> &nbsp;</div>
-                )}
-              </div>
-              <div className="chat vertical-center">
+                <div>
+                  {this.state.message ? (
+                    <div className="errorMessage">{this.state.message}</div>
+                  ) : (
+                    <div> &nbsp;</div>
+                  )}
+                </div>
                 {this.state.gameid != null &&
                 <CommentsIndexContainer
                   key={this.state.gameid}
@@ -284,8 +286,6 @@ class GamesShowContainer extends Component {
                   gameid={this.state.gameid}
                   />
                 }
-              </div>
-              <div >
                 <button onClick={this.startreplay}>Replay</button>
                 {this.state.paused ? (
                   <span>updates paused </span>
@@ -297,8 +297,8 @@ class GamesShowContainer extends Component {
           </div>
         </div>
       </div>
-    )
-  }
+    </div>
+  )}
 }
 
 export default GamesShowContainer

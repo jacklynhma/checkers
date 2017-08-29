@@ -17,8 +17,14 @@ body {
   background-color: rgb(217, 86, 24);
 }
 
+.displayBottom{
+  display: table;
+}
+
 div.chat {
   background-color: #FFFFFF;
+  padding-top: 20px;
+  height: 270px;
 
 }
 
@@ -65,6 +71,11 @@ div.possiblechoices {
 
 .bgcurrentUser {
   background-color: rgb(224, 179, 63);
+}
+
+.teams{
+  padding-bottom: 30px;
+  text-align: center;
 }
 
 .display {
