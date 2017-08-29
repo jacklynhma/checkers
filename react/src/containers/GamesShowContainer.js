@@ -239,7 +239,7 @@ class GamesShowContainer extends Component {
       <div onMouseMove={this.handleMouseMove} className="board">
         <div className="display">
           <div className="row">
-            <div className="messages col-xs-8">
+            <div className="messages col-xs-6">
               <h1>
                 {this.state.name != null &&
                   this.state.name
@@ -256,7 +256,7 @@ class GamesShowContainer extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="col-xs-8 playingboard">
+            <div className="col-xs-6 playingboard">
               {board}
               {team}
               <div className="teams row callout">
@@ -270,7 +270,7 @@ class GamesShowContainer extends Component {
                 </div>
               </div>
             </div>
-            <div className="col-xs-6 chat vertical-center">
+            <div className="col-xs-4 chat vertical-center">
               <div>
                 <div>
                   {this.state.message ? (
