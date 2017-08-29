@@ -13,6 +13,10 @@ body {
   align-items: center;
 }
 
+.errorMessage {
+  background-color: rgb(217, 86, 24);
+}
+
 div.chat {
   background-color: #FFFFFF;
 
