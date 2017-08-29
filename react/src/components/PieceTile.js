@@ -2,7 +2,7 @@ import React from 'react'
 
 const PieceTile = (props) => {
 
-  let piece  = <div> </div>
+  let piece  = <div></div>
   const colors = ["redBG", "blackBG"]
   let colorIndex = (props.columnNumber+props.rowNumber) % 2;
   let squareclicked = () => props.handleChange(props.rowNumber, props.columnNumber)
