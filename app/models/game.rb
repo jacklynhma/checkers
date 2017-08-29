@@ -184,10 +184,14 @@ class Game < ApplicationRecord
       "There is another piece you MUST move"
       # needs to be a legal move
       # if there is a piece next to you, you MUST eat it
-    elsif !required_moves(team).include?(from_coordinate + to_coordinate) &&
-      !validates_move(piece, team, from_coordinate, to_coordinate)
+    elsif illegal_move(team, from_coordinate, to_coordinate, piece)
       "That is not a legal move"
     end
+  end
+
+  def illegal_move(team, from_coordinate, to_coordinate, piece)
+    !required_moves(team).include?(from_coordinate + to_coordinate) &&
+      !validates_move(piece, team, from_coordinate, to_coordinate)
   end
 
   # row_index = current piece row, integer
