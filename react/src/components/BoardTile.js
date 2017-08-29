@@ -1,5 +1,6 @@
 import React from 'react'
 import PieceTile from './PieceTile'
+
 const BoardTile = (props) => {
 
   let piece  = <div> </div>
