@@ -1,6 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const PieceTile = (props) => {
+
 
   let piece  = <div></div>
   const colors = ["redBG", "blackBG"]
@@ -8,46 +9,23 @@ const PieceTile = (props) => {
   let squareclicked = () => props.handleChange(props.rowNumber, props.columnNumber)
 
   // assigns the color of the piece
-  if (props.piece == null){
-  } else if (props.piece == "B") {
+  if (props.piece === "B") {
     piece = <div className="blackpiece"></div>
-  } else if (props.piece == "R"){
+  } else if (props.piece === "R"){
     piece = <div className="redpiece"></div>
-  } else if (props.piece == "RK"){
+  } else if (props.piece === "RK"){
     piece =
     <div className="kingredpiece" >
       <img src="http://icons.iconarchive.com/icons/pino/peanuts/32/King-Snoopy-icon.png"></img>
     </div>
-  } else if (props.piece == "BK"){
+  } else if (props.piece === "BK"){
     piece =
     <div className="kingblackpiece">
       <img src="http://icons.iconarchive.com/icons/pino/peanuts/32/King-Snoopy-icon.png"></img>
     </div>
   }
-
-  // highlights any of the possible moves on the board
-  // triggered by clicking on one of the user's piece
-  let tileColor = colors[colorIndex] + " square"
-  if (props.possible !== null) {
-    if (props.possible.length > 0){
-      props.possible.forEach((tile) => {
-        if (tile.length === 4) {
-          if (tile[2] === props.rowNumber && tile[3] === props.columnNumber){
-            tileColor = "possiblechoices" + " square"
-          }
-        } else {
-          if (tile[0] === props.rowNumber && tile[1] === props.columnNumber){
-            tileColor = "possiblechoices" + " square"
-          }
-
-        }
-      })
-    }
-  }
   return (
-    <div key={`${props.rowNumber},${props.columnNumber}`} className={tileColor} onClick={squareclicked}>
-      {piece}
-     </div>
+    <div>{piece}</div>
   )
 }
 

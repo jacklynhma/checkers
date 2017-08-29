@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import NavBar from '../components/NavBar';
-import PieceTile from '../components/PieceTile'
+import BoardTile from '../components/BoardTile'
 import CommentsIndexContainer from './CommentsIndexContainer'
 
 
@@ -50,7 +50,6 @@ class GamesShowContainer extends Component {
     // save the last time the mouse has moved
     let time = Math.round((new Date()).getTime() / 1000)
     this.setState({lastMouseMove: time, paused: false})
-
   }
 
   togglePaused() {
@@ -74,10 +73,8 @@ class GamesShowContainer extends Component {
       } else {
         this.setState({watchingReplay: false})
       }
-
     })
   }
-
 
   componentDidMount(){
     this.getGame()
@@ -132,13 +129,11 @@ class GamesShowContainer extends Component {
   }
 
   handleChange(rowNumber, columnNumber){
-
     let teamTurn = this.state.turn % 2
     if ((teamTurn == 1 && this.state.team == "black" ) || (teamTurn == 0 && this.state.team == "red")){
       let coordinate = [rowNumber, columnNumber]
       let piece = this.state.board[coordinate[0]][coordinate[1]]
       let formPayload = ""
-
       // if the coordinates is two it will grab another the same one and return the possible movesdispla
       // if the coordintes is four, it will check if it is valid
       // if the coordinates is greater than 4, then it is invalid so it should be cleared
@@ -165,7 +160,6 @@ class GamesShowContainer extends Component {
   }
 
   render(){
-
     let winner = "";
       if (this.state.winner == "no one"){
         winner == ""
@@ -225,7 +219,7 @@ class GamesShowContainer extends Component {
           {
             row.map((piece, columnNumber)=>{
               return (
-                <PieceTile
+                <BoardTile
                   key={`piece-${columnNumber}`}
                   columnNumber = {columnNumber}
                   rowNumber = {rowNumber}
@@ -245,11 +239,9 @@ class GamesShowContainer extends Component {
         <div onMouseMove={this.handleMouseMove} className="board">
           <div className="display row">
             <div className="messages col-xs-8">
-              <h2>
-                {this.state.message != null &&
-                  this.state.message
-                }
-              </h2>
+              <div>
+
+              </div>
               <h1>
                 {this.state.name != null &&
                   this.state.name
@@ -277,6 +269,13 @@ class GamesShowContainer extends Component {
               </div>
             </div>
             <div className="col-xs-4">
+              <div>
+                {this.state.message ? (
+                  <div className="errorMessage">{this.state.message}</div>
+                ) : (
+                  <div> &nbsp;</div>
+                )}
+              </div>
               <div className="chat vertical-center">
                 {this.state.gameid != null &&
                 <CommentsIndexContainer
@@ -288,7 +287,6 @@ class GamesShowContainer extends Component {
               </div>
               <div >
                 <button onClick={this.startreplay}>Replay</button>
-
                 {this.state.paused ? (
                   <span>updates paused </span>
                 ) : (
