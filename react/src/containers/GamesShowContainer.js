@@ -270,7 +270,7 @@ class GamesShowContainer extends Component {
                 </div>
               </div>
             </div>
-            <div className="col-xs-4 chat vertical-center">
+            <div className="col-xs-6 chat vertical-center">
               <div>
                 <div>
                   {this.state.message ? (
