@@ -1,7 +1,13 @@
 import React from 'react';
 
 const PieceTile = (props) => {
-  let piece = "";
+
+
+  let piece  = <div></div>
+  const colors = ["redBG", "blackBG"]
+  let colorIndex = (props.columnNumber+props.rowNumber) % 2;
+  let squareclicked = () => props.handleChange(props.rowNumber, props.columnNumber)
+
   // assigns the color of the piece
   if (props.piece === "B") {
     piece = <div className="blackpiece"></div>
