@@ -36,13 +36,19 @@ class Game < ApplicationRecord
   end
 
   def assign_team(current_user)
-    if self.gameplayers.where(team: "red").count <  self.gameplayers.where(team: "black").count
-      self.gameplayers.create(user: current_user, team: "red")
-    elsif self.gameplayers.where(team: "black").count < self.gameplayers.where(team: "red").count
-      self.gameplayers.create(user: current_user, team: "black")
-    elsif self.gameplayers.where(team: "black").count == self.gameplayers.where(team: "red").count
-      self.gameplayers.create(user: current_user, team: "black")
+    if red_team_count <  black_team_count
+      gameplayers.create(user: current_user, team: "red")
+    else
+      gameplayers.create(user: current_user, team: "black")
     end
+  end
+
+  def red_team_count
+    gameplayers.where(team: "red").count
+  end
+
+  def black_team_count
+    gameplayers.where(team: "black").count
   end
 
   def not_your_turn(team, turn)
