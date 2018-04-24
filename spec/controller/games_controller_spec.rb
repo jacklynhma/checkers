@@ -23,7 +23,7 @@ let!(:third_user) { User.create(first_name: "harry", email: "harry@nyc.com", pas
     # return a list of games
     it "should rediret to the game show page" do
       sign_in first_user
-      post :join, params: {id: first_game.id}
+      post :join, params: { id: first_game.id }
 
       expect(response.status).to eq 302
       expect(first_game.gameplayers[0].user.first_name).to eq("jackie")
@@ -44,7 +44,7 @@ let!(:third_user) { User.create(first_name: "harry", email: "harry@nyc.com", pas
     let!(:sec_match) { Gameplayer.create(team: "black", user_id: first_user.id, game_id: first_game.id )}
     it "should rediret to the game show page" do
       sign_in first_user
-      post :resign, params: {id: first_game.id}
+      post :resign, params: { id: first_game.id }
 
       expect(response.status).to eq 302
       expect(first_game.gameplayers).to eq([])
@@ -53,14 +53,15 @@ let!(:third_user) { User.create(first_name: "harry", email: "harry@nyc.com", pas
   describe "Post#create" do
     it "should create a game" do
       sign_in first_user
-      post :create, params: {game: {name: "testingtest"}}
+      post :create, params: { game: { name: "testingtest" } }
 
       expect(response.status).to eq 302
       expect(Game.last.name).to eq("testingtest")
     end
+
     it "should render a 200 status since the name is not entered" do
       sign_in first_user
-      post :create, params: {game: {name: ""}}
+      post :create, params: { game: { name: "" } }
 
       expect(response.status).to eq 200
       expect(response.content_type).to eq "text/html"

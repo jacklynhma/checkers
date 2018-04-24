@@ -35,6 +35,22 @@ class Game < ApplicationRecord
     self.history_of_pieces ||= []
   end
 
+  def assign_team(current_user)
+    if red_team_count <  black_team_count
+      gameplayers.create(user: current_user, team: "red")
+    else
+      gameplayers.create(user: current_user, team: "black")
+    end
+  end
+
+  def red_team_count
+    gameplayers.where(team: "red").count
+  end
+
+  def black_team_count
+    gameplayers.where(team: "black").count
+  end
+
   def not_your_turn(team, turn)
     if team == "black" && (turn % 2 != 1)
       return true

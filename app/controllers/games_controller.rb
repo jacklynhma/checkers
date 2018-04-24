@@ -7,28 +7,9 @@ class GamesController < ApplicationController
     @game = Game.new
   end
 
-  # Assigning players to teams
-  def join
+  def edit
     @game = Game.find(params[:id])
-    if @game.gameplayers.where(team: "red").count <  @game.gameplayers.where(team: "black").count
-      @game.gameplayers.create(user: current_user, team: "red")
-    elsif @game.gameplayers.where(team: "black").count < @game.gameplayers.where(team: "red").count
-      @game.gameplayers.create(user: current_user, team: "black")
-    elsif @game.gameplayers.where(team: "black").count == @game.gameplayers.where(team: "red").count
-      @game.gameplayers.create(user: current_user, team: "black")
-    end
-    redirect_to "/games/#{@game.id}"
-  end
-
-  def resign
-    @game = Game.find(params[:id])
-    player = @game.gameplayers.find_by(user: current_user)
-    if player.nil?
-      flash[:notice] = "you are not part of this team"
-    else
-      player.destroy
-    end
-    redirect_to games_path
+    render action: "edit"
   end
 
   def create
@@ -41,33 +22,45 @@ class GamesController < ApplicationController
     end
   end
 
-def edit
-  @game = Game.find(params[:id])
-  render action: "edit"
-end
+  # Assigning players to teams
+  def join
+    @game = Game.find(params[:id])
+    @game.assign_team(current_user)
+    redirect_to "/games/#{@game.id}"
+  end
 
+  def resign
+    @game = Game.find(params[:id])
+    player = @game.gameplayers.find_by(user: current_user)
 
-  # returns the row
-   def row(position)
-     position[0]
-   end
+    if player.nil?
+      flash[:notice] = "you are not part of this team"
+    else
+      player.destroy
+    end
 
-   # returns the column
-   def column(position)
-     position[1]
-   end
-
+    redirect_to games_path
+  end
 
   private
-
-  def game_params
-    params.require(:game).permit(:name, :state_of_piece)
-  end
 
   def authorize_user
     if !user_signed_in?
       redirect_to new_user_session_path
       false
     end
+  end
+   # returns the column
+  def column(position)
+    position[1]
+  end
+
+  def game_params
+    params.require(:game).permit(:name, :state_of_piece)
+  end
+
+  # returns the row
+  def row(position)
+   position[0]
   end
 end
