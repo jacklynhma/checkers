@@ -263,6 +263,7 @@ DEPENDENCIES
   launchy
   listen (~> 3.0.5)
   loofah (~> 2.2.1)
+  nokogiri (~> 1.8.2)
   pg (~> 0.18)
   pry-byebug
   pry-rails
