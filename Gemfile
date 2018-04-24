@@ -12,6 +12,7 @@ gem 'jquery-rails'
 gem 'devise'
 gem 'simple_form'
 gem 'bootsnap', require: false
+gem 'loofah', '~> 2.2.1'
 
 group :development do
   gem 'pry-byebug'
