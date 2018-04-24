@@ -1,21 +1,21 @@
 source 'https://rubygems.org/'
 
 ruby '2.3.3'
-gem "active_model_serializers"
+gem 'active_model_serializers'
+gem 'bootsnap', require: false
 gem 'carrierwave'
+gem 'devise'
 gem 'rails', '~> 5.1.2'
+gem 'jquery-rails'
 gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.7'
-gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
-gem 'jquery-rails'
-gem 'devise'
+gem 'sass-rails', '~> 5.0'
 gem 'simple_form'
-gem 'bootsnap', require: false
 
 group :development do
-  gem 'pry-byebug'
   gem 'listen', '~> 3.0.5'
+  gem 'pry-byebug'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
@@ -24,11 +24,11 @@ group :development, :test do
   gem 'capybara'
   gem 'factory_girl_rails'
   gem 'launchy', require: false
+  gem 'pry-byebug'
   gem 'pry-rails'
   gem 'rspec-rails'
   gem 'rails-controller-testing'
   gem 'shoulda'
-  gem 'pry-byebug'
   gem 'valid_attribute'
 end
 
