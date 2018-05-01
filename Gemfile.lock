@@ -154,8 +154,8 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.0.3)
-      loofah (~> 2.0)
+    rails-html-sanitizer (1.0.4)
+      loofah (~> 2.2, >= 2.2.2)
     rails_12factor (0.0.3)
       rails_serve_static_assets
       rails_stdout_logging
@@ -270,6 +270,7 @@ DEPENDENCIES
   puma (~> 3.7)
   rails (~> 5.1.2)
   rails-controller-testing
+  rails-html-sanitizer (~> 1.0.4)
   rails_12factor
   rspec-rails
   sass-rails (~> 5.0)
@@ -285,4 +286,4 @@ RUBY VERSION
    ruby 2.3.3p222
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
