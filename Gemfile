@@ -6,15 +6,15 @@ gem 'bootsnap', require: false
 gem 'carrierwave'
 gem 'devise'
 gem 'rails', '~> 5.1.2'
+gem 'rails-html-sanitizer', '~> 1.0.4'
 gem 'jquery-rails'
+gem 'loofah', '~> 2.2.1'
+gem 'nokogiri', '~> 1.8.2'
 gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.7'
 gem 'uglifier', '>= 1.3.0'
 gem 'sass-rails', '~> 5.0'
 gem 'simple_form'
-gem 'bootsnap', require: false
-gem 'loofah', '~> 2.2.1'
-gem 'nokogiri', '~> 1.8.2'
 
 group :development do
   gem 'listen', '~> 3.0.5'
