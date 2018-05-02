@@ -5,10 +5,12 @@ gem 'active_model_serializers'
 gem 'bootsnap', require: false
 gem 'carrierwave'
 gem 'devise'
+gem 'dotenv-rails'
 gem 'rails', '~> 5.1.2'
 gem 'rails-html-sanitizer', '~> 1.0.4'
 gem 'jquery-rails'
 gem 'loofah', '~> 2.2.1'
+gem 'omniauth-github'
 gem 'nokogiri', '~> 1.8.2'
 gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.7'
@@ -18,7 +20,6 @@ gem 'simple_form'
 
 group :development do
   gem 'listen', '~> 3.0.5'
-  gem 'pry-byebug'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end

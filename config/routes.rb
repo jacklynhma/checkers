@@ -1,10 +1,14 @@
 Rails.application.routes.draw do
+
+  get '/auth/github/callback', to: 'sessions#create'
   resources :games, only: [:index, :create, :edit, :new] do
     member do
       post :join
       post :resign
     end
   end
+
+  resources :accounts, only: [:create]
   # static pages is react
 
   devise_for :users
