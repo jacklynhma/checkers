@@ -4,6 +4,7 @@ class User < ApplicationRecord
   validates_presence_of :first_name, uniqueness: true
   has_many :gameplayers
   has_many :comments
+  has_many :accounts
   has_many :games, through: :gameplayers
 
   def admin?
