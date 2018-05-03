@@ -2,6 +2,9 @@
   <div class="userProfile col-xs-12">
     <h2><%= @user.first_name %>'s Profile</h2>
     <p><%= @user.email %></p>
-      <%= link_to "Delete Account", registration_path(@user), data: { confirm: "Are you sure?" }, method: :delete %>
+    Connect to:
+    <%= link_to 'Github', '/auth/github'%>
+    <br>
+    <%= link_to "Delete Account", registration_path(@user), data: { confirm: "Are you sure?" }, method: :delete %>
   </div>
 </div>

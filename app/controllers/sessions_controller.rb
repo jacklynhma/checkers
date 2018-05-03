@@ -3,9 +3,9 @@ class SessionsController < ApplicationController
 
     begin
       # https://www.sitepoint.com/rails-authentication-oauth-2-0-omniauth/
-      @user = User.from_omniauth(request.env['omniauth.auth'])
+      @account = Account.from_omniauth(omniauth_hash, current_user)
       session[:user_id] = @user.id
-      flash[:success] = "Welcome, #{@user.name}"
+      flash[:success] = "Thank you for connecting your Github"
     rescue
       flash[:warning] = "There was an error "
     end
@@ -14,4 +14,7 @@ class SessionsController < ApplicationController
 
   private
 
+  def omniauth_hash
+    request.env['omniauth.auth']
+  end
 end
