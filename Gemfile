@@ -11,6 +11,8 @@ gem 'rails-html-sanitizer', '~> 1.0.4'
 gem 'jquery-rails'
 gem 'loofah', '~> 2.2.1'
 gem 'omniauth-github'
+gem "omniauth-google-oauth2"
+gem 'omniauth-facebook'
 gem 'nokogiri', '~> 1.8.2'
 gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.7'
