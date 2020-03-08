@@ -1,11 +1,12 @@
 source 'https://rubygems.org/'
 
 ruby '2.4.3'
+gem "actionview", ">= 5.1.6.2"
 gem 'active_model_serializers'
 gem 'bootsnap', require: false
 gem 'carrierwave'
 gem 'devise'
-gem 'rails', '~> 5.1.2'
+gem 'rails', '~> 5.1.3'
 gem 'rails-html-sanitizer', '~> 1.0.4'
 gem 'jquery-rails'
 gem 'loofah', '~> 2.2.1'
