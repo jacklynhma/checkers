@@ -1,6 +1,6 @@
 source 'https://rubygems.org/'
 
-ruby '2.5.1'
+ruby '2.4.3'
 gem 'active_model_serializers'
 gem 'bootsnap', require: false
 gem 'carrierwave'
