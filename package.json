@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.9.6",
     "babel-preset-react": "^6.24.1",
     "enzyme": "^2.9.1",
     "isparta-loader": "2.0.0",
