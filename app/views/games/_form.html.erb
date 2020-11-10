@@ -1,7 +1,4 @@
 <%= form_for @game do |f| %>
-  <%= f.label :name, "Title" %>
-  <%= f.text_field :name %>
-
-
+  <%= f.text_field :name, :placeholder => "Add a Title" %>
 <%= f.submit %>
 <% end %>

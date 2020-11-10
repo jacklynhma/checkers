@@ -10,20 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180502020916) do
+ActiveRecord::Schema.define(version: 20170808042227) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "accounts", force: :cascade do |t|
-    t.string "provider", null: false
-    t.string "uid", null: false
-    t.bigint "user_id"
-    t.index ["provider", "uid"], name: "index_accounts_on_provider_and_uid", unique: true
-    t.index ["provider"], name: "index_accounts_on_provider"
-    t.index ["uid"], name: "index_accounts_on_uid"
-    t.index ["user_id"], name: "index_accounts_on_user_id"
-  end
 
   create_table "comments", force: :cascade do |t|
     t.string "body", null: false
