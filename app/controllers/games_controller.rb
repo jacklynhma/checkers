@@ -7,6 +7,10 @@ class GamesController < ApplicationController
     @game = Game.new
   end
 
+  def new 
+    @game = Game.new
+  end 
+
   def edit
     @game = Game.find(params[:id])
     render action: "edit"

@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   devise_for :users
   resources :users, only: [:index, :show, :destroy]
-  root 'pages#home'
+  root 'static_pages#index'
   get '/games/:id', to: 'static_pages#index'
   get '/games/:game_id/comments', to: 'static_pages#index'
 
