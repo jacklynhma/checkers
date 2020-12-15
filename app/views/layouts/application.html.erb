@@ -18,21 +18,24 @@
   </head>
 
   <body>
-    <nav class="navbar">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <h3><a style="color: #f6c411;" href="/">Team Checkers</a></h3>
+        <div class="navbar-text">
+          <span><h4><a style="color: #f6c411;" href="https://www.jackierocks.life/">Home</a></h4></span>
+        </div>
+          <div class="navbar-text">
+          <span><h4><a style="color: #f6c411;" href="/">Team Checkers</a></h4></span>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
             <% if user_signed_in? %>
-            <li>  <%= link_to current_user.first_name, user_path(current_user.id) %></li>
+            <li> <%= link_to current_user.first_name, user_path(current_user.id) %></li>
             <li> <%= link_to "Sign Out", destroy_user_session_path, method: :delete %></li>
-            <% if current_user.admin? %>
-            <li> <%= link_to "Admin Section", admin_path %> </li>
-            <% end %>
+              <% if current_user.admin? %>
+                <li> <%= link_to "Admin Section", admin_path %> </li>
+              <% end %>
             <% else %>
             <li><%= link_to "Sign In", new_user_session_path %></li>
             <li><%= link_to "Sign up", new_user_registration_path %></li>
