@@ -5,6 +5,19 @@ a {
 body {
   font-family: 'Open Sans', sans-serif;
 }
+
+.testing {
+  background-color: #c04242;
+}
+
+#formRestPassword {
+  text-align: center;
+}
+
+#resetPassword {
+  padding-top: 1rem;
+}
+
 .vertical-center {
   padding-bottom: 50px;
   display: flex;
