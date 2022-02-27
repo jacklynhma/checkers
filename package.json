@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": " ",
   "engines": {
-    "node": "16.x",
+    "node": "13.x",
     "npm": "7.x"
   },
   "main": "webpack.config.js",
