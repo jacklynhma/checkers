@@ -5,7 +5,7 @@
   "description": " ",
   "engines": {
     "node": "16.x"
-  }
+  },
   "main": "webpack.config.js",
   "scripts": {
     "heroku-postbuild": "NODE_ENV=production npm run webpack -- -p",
