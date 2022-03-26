@@ -1,6 +1,6 @@
 source 'https://rubygems.org/'
 
-ruby '2.4.3'
+ruby '2.6.9'
 gem "actionview", ">= 5.1.6.2"
 gem 'active_model_serializers'
 gem 'bootsnap', require: false
@@ -16,10 +16,10 @@ gem 'puma', '~> 3.7'
 gem 'uglifier', '>= 1.3.0'
 gem 'sass-rails', '~> 5.0'
 gem 'simple_form'
+gem 'mimemagic', github: 'mimemagicrb/mimemagic', ref: '01f92d86d15d85cfd0f20dabd025dcbd36a8a60f'
 
 group :development do
   gem 'listen', '~> 3.0.5'
-  gem 'pry-byebug'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
